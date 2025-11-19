@@ -1,32 +1,51 @@
 import { Scene, GameObjects } from 'phaser';
+import { HexGrid } from '../classes/HexGrid';
 
-export class MainMenu extends Scene
-{
-    background: GameObjects.Image;
-    logo: GameObjects.Image;
-    title: GameObjects.Text;
+export class MainMenu extends Scene {
+    grid: HexGrid
+    graphics: Phaser.GameObjects.Graphics
 
-    constructor ()
-    {
+    constructor() {
         super('MainMenu');
     }
 
-    create ()
-    {
-        this.background = this.add.image(512, 384, 'background');
+    create() {
+        this.grid = new HexGrid(128);
+        this.graphics = this.add.graphics();
 
-        this.logo = this.add.image(512, 300, 'logo');
-
-        this.title = this.add.text(512, 460, 'Main Menu', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
-            align: 'center'
-        }).setOrigin(0.5);
-
-        this.input.once('pointerdown', () => {
-
-            this.scene.start('Game');
-
+        this.graphics.setDefaultStyles({
+            lineStyle: {
+                width: 1,
+                color: 0xffffff,
+                alpha: 1,
+            },
+            fillStyle: {
+                color: 0xffffff,
+                alpha: 1,
+            },
         });
+
+    }
+
+    update() {
+        this.graphics.clear();
+        let r = this.grid.tileSize / 2.0;
+        let [hx, hy] = this.grid.worldToTile([this.input.x, this.input.y])
+        for (let x = 0; x < 16; x++) {
+            for (let y = 0; y < 12; y++) {
+                let [px, py] = this.grid.tileCenter([x, y]);
+                this.graphics.beginPath();
+                for (let i = 0 ; i < 6 ; i++) {
+                    this.graphics.lineTo(px + r * Math.sin(i * Math.PI / 3), py + r * Math.cos(i * Math.PI / 3));
+                }
+                this.graphics.closePath();
+                this.graphics.strokePath();
+                if (x == hx && y == hy) {
+                    this.graphics.fillPath();
+                }
+
+            }
+        }
+        this.graphics.update();
     }
 }
