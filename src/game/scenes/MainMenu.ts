@@ -7,6 +7,7 @@ export class MainMenu extends Scene {
     gridColor: number[][]
     graphics: Phaser.GameObjects.Graphics
     bird: Bird;
+    text: Phaser.GameObjects.Text;
 
     constructor() {
         super("MainMenu");
@@ -43,6 +44,7 @@ export class MainMenu extends Scene {
         this.bird = new Bird(this, [400, 400], "placeholder");
         this.add.existing(this.bird);
 
+        this.text = this.add.text(40, 40, "Water: 0", {color: "white", stroke: "black", strokeThickness: 4, fontSize: 32});
     }
 
     update(_time: number, delta: number) {
@@ -77,6 +79,8 @@ export class MainMenu extends Scene {
         }
         this.graphics.update();
 
-        this.bird.update(delta, this.grid);
+        this.bird.update(delta, this.grid, this.gridColor[by][bx]);
+        let tx = "Water: " + Math.floor(this.bird.water).toFixed(0)
+        this.text.setText(tx)
     }
 }

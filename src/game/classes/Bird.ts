@@ -28,10 +28,12 @@ export class Bird extends Phaser.GameObjects.Sprite {
      */
 
     keys: Phaser.Types.Input.Keyboard.CursorKeys;
+    water: number
 
     constructor(scene: Phaser.Scene, [x, y]: [number, number], texture: string | Phaser.Textures.Texture) {
         super(scene, x, y, texture)
         this.keys = this.scene.input.keyboard!!.createCursorKeys();
+        this.water = 0
     }
 
     snapToHexGrid(grid: HexGrid) {
@@ -39,7 +41,7 @@ export class Bird extends Phaser.GameObjects.Sprite {
         this.setPosition(x, y)
     }
 
-    update(delta: number, grid: HexGrid) {
+    update(delta: number, grid: HexGrid, gridColor: number) {
         if (this.scene.input.mousePointer.leftButtonDown()) {
             let vec = [this.scene.input.x - this.x, this.scene.input.y - this.y];
             let magn = Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1]);
@@ -49,6 +51,20 @@ export class Bird extends Phaser.GameObjects.Sprite {
             this.rotation = Math.atan2(norm[1], norm[0]) + Math.PI / 2
         } else {
             this.snapToHexGrid(grid);
+        }
+
+        if (gridColor == 0x00528F) {
+            this.water += delta / 2000.0;
+        } else {
+            this.water -= delta / 8000.0;
+        }
+
+        if (gridColor == 0x00528F) {
+            this.water += delta / 2000.0;
+            this.water = Math.min(50, this.water)
+        } else {
+            this.water -= delta / 8000.0;
+            this.water = Math.max(0, this.water)
         }
     }
 }
