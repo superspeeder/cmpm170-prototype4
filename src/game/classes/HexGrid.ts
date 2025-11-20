@@ -15,6 +15,10 @@ export class HexGrid {
         }
     }
 
+    tileToWorld(p: [number, number]): [number, number] {
+        return this.tileCenter(p)
+    }
+
     worldToTile([worldX, worldY]: [number, number]): [number, number] {
         return this.axialToOffset(this.pixelToAxial([worldX, worldY]))
     }

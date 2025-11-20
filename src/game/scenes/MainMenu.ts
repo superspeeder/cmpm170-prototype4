@@ -1,16 +1,18 @@
-import { Scene, GameObjects } from 'phaser';
-import { HexGrid } from '../classes/HexGrid';
+import { Scene } from "phaser";
+import { HexGrid } from "../classes/HexGrid";
+import { Bird } from "../classes/Bird";
 
 export class MainMenu extends Scene {
-    grid: HexGrid
-    graphics: Phaser.GameObjects.Graphics
+    grid: HexGrid;
+    graphics: Phaser.GameObjects.Graphics;
+    bird: Bird;
 
     constructor() {
-        super('MainMenu');
+        super("MainMenu");
     }
 
     create() {
-        this.grid = new HexGrid(128);
+        this.grid = new HexGrid(64);
         this.graphics = this.add.graphics();
 
         this.graphics.setDefaultStyles({
@@ -25,27 +27,41 @@ export class MainMenu extends Scene {
             },
         });
 
+        this.bird = new Bird(this, [400, 400], "placeholder");
+        this.add.existing(this.bird);
+
     }
 
-    update() {
+    update(time: number, delta: number) {
         this.graphics.clear();
         let r = this.grid.tileSize / 2.0;
-        let [hx, hy] = this.grid.worldToTile([this.input.x, this.input.y])
-        for (let x = 0; x < 16; x++) {
-            for (let y = 0; y < 12; y++) {
+        let [hx, hy] = this.grid.worldToTile([this.input.x, this.input.y]);
+        let [bx, by] = this.grid.worldToTile([this.bird.x, this.bird.y]);
+        for (let x = 0; x < 32; x++) {
+            for (let y = 0; y < 32; y++) {
                 let [px, py] = this.grid.tileCenter([x, y]);
+                if (bx == x && by == y) {
+                    this.graphics.fillStyle(0xff0000, 1)
+                } else {
+                    this.graphics.fillStyle(0xffffff, 1)
+                }
+
                 this.graphics.beginPath();
-                for (let i = 0 ; i < 6 ; i++) {
-                    this.graphics.lineTo(px + r * Math.sin(i * Math.PI / 3), py + r * Math.cos(i * Math.PI / 3));
+                for (let i = 0; i < 6; i++) {
+                    this.graphics.lineTo(
+                        px + r * Math.sin((i * Math.PI) / 3),
+                        py + r * Math.cos((i * Math.PI) / 3)
+                    );
                 }
                 this.graphics.closePath();
                 this.graphics.strokePath();
-                if (x == hx && y == hy) {
+                if ((x == hx && y == hy) || (x == bx && y == by)) {
                     this.graphics.fillPath();
                 }
-
             }
         }
         this.graphics.update();
+
+        this.bird.update(delta, this.grid);
     }
 }
