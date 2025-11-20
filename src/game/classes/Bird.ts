@@ -40,23 +40,14 @@ export class Bird extends Phaser.GameObjects.Sprite {
     }
 
     update(delta: number, grid: HexGrid) {
-        if (this.keys.up.isDown) {
-            this.y -= delta * 0.5;
-        }
-        
-        if (this.keys.down.isDown) {
-            this.y += delta * 0.5;
-        }
-        
-        if (this.keys.left.isDown) {
-            this.x -= delta * 0.5;
-        }
-        
-        if (this.keys.right.isDown) {
-            this.x += delta * 0.5;
-        }
-        
-        if (this.keys.space.isDown) {
+        if (this.scene.input.mousePointer.leftButtonDown()) {
+            let vec = [this.scene.input.x - this.x, this.scene.input.y - this.y];
+            let magn = Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1]);
+            let norm = [vec[0] / magn, vec[1] / magn];
+            this.x += delta * norm[0] / 5.0
+            this.y += delta * norm[1] / 5.0
+            this.rotation = Math.atan2(norm[1], norm[0]) + Math.PI / 2
+        } else {
             this.snapToHexGrid(grid);
         }
     }
