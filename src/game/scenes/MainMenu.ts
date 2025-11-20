@@ -13,7 +13,7 @@ export class MainMenu extends Scene {
     }
 
     create() {
-        this.grid = new HexGrid(64);
+        this.grid = new HexGrid(128);
         this.graphics = this.add.graphics();
         this.gridColor = [[0x007500,0x00528F,0x00528F,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x00528F,0x00528F,0x007500],
                           [0x007500,0x007500,0x00528F,0x0B4700,0x0B4700,0x0B4700,0x007500,0x007500,0x007500,0x007500,0x0B4700,0x0B4700,0x00528F,0x007500,0x007500,0x007500],
@@ -45,13 +45,13 @@ export class MainMenu extends Scene {
 
     }
 
-    update(time: number, delta: number) {
+    update(_time: number, delta: number) {
         this.graphics.clear();
         let r = this.grid.tileSize / 2.0;
         let [hx, hy] = this.grid.worldToTile([this.input.x, this.input.y]);
         let [bx, by] = this.grid.worldToTile([this.bird.x, this.bird.y]);
-        for (let x = 0; x < 32; x++) {
-            for (let y = 0; y < 32; y++) {
+        for (let x = 0; x < 16; x++) {
+            for (let y = 0; y < 12; y++) {
                 let [px, py] = this.grid.tileCenter([x, y]);
                 if (bx == x && by == y) {
                     this.graphics.fillStyle(0xff0000, 1)
