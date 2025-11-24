@@ -107,11 +107,11 @@ export class GameState {
         graphics.update();
     }
 
-    updateBirds(delta: number, clicked: boolean) {
+    updateBirds(delta: number, clicked: boolean, camera: Phaser.Cameras.Scene2D.Camera) {
         this.birds.forEach((bird) => {
             let [birdGridX, birdGridY] = this.grid.worldToTile([bird.x, bird.y])
             let color = this.gridColor[birdGridY][birdGridX]
-            bird.update(delta, this.grid, color, clicked);
+            bird.update(delta, this.grid, color, clicked, camera);
         })
     }
 

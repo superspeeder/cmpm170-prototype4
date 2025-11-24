@@ -52,13 +52,14 @@ export class Bird extends Phaser.GameObjects.Sprite {
         this.setPosition(x, y);
     }
 
-    update(delta: number, grid: HexGrid, gridColor: number, mouseClicked: boolean) {
+    update(delta: number, grid: HexGrid, gridColor: number, mouseClicked: boolean, camera: Phaser.Cameras.Scene2D.Camera) {
         if (!this.activeBird) return;
 
         if (mouseClicked) {
+            let wp = camera.getWorldPoint(this.scene.input.x, this.scene.input.y)
             let vec = [
-                this.scene.input.x - this.x,
-                this.scene.input.y - this.y,
+                wp.x - this.x,
+                wp.y - this.y,
             ];
             let magn = Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1]);
             let norm = [vec[0] / magn, vec[1] / magn];

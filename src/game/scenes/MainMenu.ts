@@ -55,6 +55,7 @@ export class MainMenu extends Scene {
 
         this.endTurnButton = this.add.sprite(900, 700, "end-turn");
         this.endTurnButton.scale = 0.5;
+        this.endTurnButton.setScrollFactor(0)
 
         // this.endTurnButton.on("pointerdown", () => {
         //     this.endTurnButton.setTexture("end-turn-clicked")
@@ -71,6 +72,7 @@ export class MainMenu extends Scene {
             strokeThickness: 4,
             fontSize: 26,
         });
+        this.text.setScrollFactor(0)
 
         this.text2 = this.add.text(40, 65, "Movement: 0", {
             color: "white",
@@ -78,6 +80,7 @@ export class MainMenu extends Scene {
             strokeThickness: 4,
             fontSize: 26,
         });
+        this.text2.setScrollFactor(0)
 
         this.input.enable(this.endTurnButton)
 
@@ -110,8 +113,12 @@ export class MainMenu extends Scene {
 
         this.lastClicked = clicked;
 
-        gameState.updateBirds(delta, clicked && passthrough);
+        let camera = this.cameras.main
+        gameState.updateBirds(delta, clicked && passthrough, camera);
         gameState.drawTrail(this.graphics2);
+
+        camera.centerOn(gameState.turnQueue.getCurrentTurn().bird.x, gameState.turnQueue.getCurrentTurn().bird.y)
+
         this.updateText()
     }
 
@@ -121,6 +128,7 @@ export class MainMenu extends Scene {
             Math.floor(
                 gameState.turnQueue.getCurrentTurn().bird.water
             ).toFixed(0);
+
         this.text.setText(tx);
 
         let tx2 =
