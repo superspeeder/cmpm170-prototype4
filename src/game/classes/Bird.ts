@@ -1,3 +1,4 @@
+import { gameState } from "./GameManager";
 import { HexGrid } from "./HexGrid";
 
 export class Bird extends Phaser.GameObjects.Sprite {
@@ -28,43 +29,77 @@ export class Bird extends Phaser.GameObjects.Sprite {
      */
 
     keys: Phaser.Types.Input.Keyboard.CursorKeys;
-    water: number
+    water: number;
+    activeBird: boolean;
+    remainingMovement: number;
+    overGridColor: number;
+    trail: [number,number][];
 
-    constructor(scene: Phaser.Scene, [x, y]: [number, number], texture: string | Phaser.Textures.Texture) {
-        super(scene, x, y, texture)
+    constructor(
+        scene: Phaser.Scene,
+        [x, y]: [number, number],
+        texture: string | Phaser.Textures.Texture
+    ) {
+        super(scene, x, y, texture);
         this.keys = this.scene.input.keyboard!!.createCursorKeys();
-        this.water = 0
+        this.water = 0;
+        this.activeBird = false;
+        this.trail = []
     }
 
     snapToHexGrid(grid: HexGrid) {
-        let [x, y] = grid.tileToWorld(grid.worldToTile([this.x, this.y]))
-        this.setPosition(x, y)
+        let [x, y] = grid.tileToWorld(grid.worldToTile([this.x, this.y]));
+        this.setPosition(x, y);
     }
 
-    update(delta: number, grid: HexGrid, gridColor: number) {
-        if (this.scene.input.mousePointer.leftButtonDown()) {
-            let vec = [this.scene.input.x - this.x, this.scene.input.y - this.y];
+    update(delta: number, grid: HexGrid, gridColor: number, mouseClicked: boolean) {
+        if (!this.activeBird) return;
+
+        if (mouseClicked) {
+            let vec = [
+                this.scene.input.x - this.x,
+                this.scene.input.y - this.y,
+            ];
             let magn = Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1]);
             let norm = [vec[0] / magn, vec[1] / magn];
-            this.x += delta * norm[0] / 5.0
-            this.y += delta * norm[1] / 5.0
-            this.rotation = Math.atan2(norm[1], norm[0]) + Math.PI / 2
-        } else {
-            this.snapToHexGrid(grid);
+            if (this.remainingMovement > 0) {
+                let move_mag = Math.min(this.remainingMovement, delta / 5.0);
+
+                this.x += move_mag * norm[0];
+                this.y += move_mag * norm[1];
+                this.remainingMovement -= move_mag;
+
+                this.trail.push([this.x, this.y])
+            }
+            this.rotation = Math.atan2(norm[1], norm[0]) + Math.PI / 2;
         }
 
-        if (gridColor == 0x00528F) {
-            this.water += delta / 2000.0;
-        } else {
-            this.water -= delta / 8000.0;
-        }
+        this.overGridColor = gridColor;
+   }
 
-        if (gridColor == 0x00528F) {
-            this.water += delta / 2000.0;
-            this.water = Math.min(50, this.water)
+    startTurn() {
+        this.activeBird = true;
+        this.remainingMovement = MOVEMENT_PER_TURN;
+        this.trail = []
+        this.setTexture("placeholder-active")
+    }
+
+    endTurn() {
+        this.setTexture("placeholder")
+        this.activeBird = false;
+        this.remainingMovement = 0;
+        this.snapToHexGrid(gameState.grid)
+
+        
+        if (this.overGridColor == 0x00528f) {
+            this.water += 1;
+            this.water = Math.min(50, this.water);
         } else {
-            this.water -= delta / 8000.0;
-            this.water = Math.max(0, this.water)
+            this.water -= 0.25;
+            this.water = Math.max(0, this.water);
         }
+        this.trail = []
     }
 }
+
+export const MOVEMENT_PER_TURN: number = 350;

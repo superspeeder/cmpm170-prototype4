@@ -25,6 +25,7 @@ export class Preloader extends Scene
             bar.width = 4 + (460 * progress);
 
         });
+
     }
 
     preload ()
@@ -34,6 +35,9 @@ export class Preloader extends Scene
 
         this.load.image('logo', 'logo.png');
         this.load.image('placeholder', 'placeholder.png');
+        this.load.image('placeholder-active', 'placeholder-active.png');
+        this.load.image('end-turn', 'end_turn.png');
+        this.load.image('end-turn-clicked', 'end_turn_clicked.png');
     }
 
     create ()

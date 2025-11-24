@@ -1,33 +1,25 @@
 import { Scene } from "phaser";
-import { HexGrid } from "../classes/HexGrid";
-import { Bird } from "../classes/Bird";
+import { Bird, MOVEMENT_PER_TURN } from "../classes/Bird";
+import { gameState as gameState } from "../classes/GameManager";
 
 export class MainMenu extends Scene {
-    grid: HexGrid
-    gridColor: number[][]
-    graphics: Phaser.GameObjects.Graphics
-    bird: Bird;
+    graphics: Phaser.GameObjects.Graphics;
+    graphics2: Phaser.GameObjects.Graphics;
     text: Phaser.GameObjects.Text;
+    text2: Phaser.GameObjects.Text;
+    endTurnButton: Phaser.GameObjects.Sprite;
+    lastClicked: boolean
+    uiClick?: string | null
 
     constructor() {
         super("MainMenu");
+        this.lastClicked = false;
     }
 
     create() {
-        this.grid = new HexGrid(128);
+        gameState.scene = this;
         this.graphics = this.add.graphics();
-        this.gridColor = [[0x007500,0x00528F,0x00528F,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x00528F,0x00528F,0x007500],
-                          [0x007500,0x007500,0x00528F,0x0B4700,0x0B4700,0x0B4700,0x007500,0x007500,0x007500,0x007500,0x0B4700,0x0B4700,0x00528F,0x007500,0x007500,0x007500],
-                          [0x007500,0x007500,0x007500,0x0B4700,0x0B4700,0x0B4700,0x0B4700,0x007500,0x007500,0x007500,0x007500,0x0B4700,0x007500,0x007500,0x007500,0x007500],
-                          [0x007500,0x007500,0x007500,0x0B4700,0x0B4700,0x0B4700,0x007500,0x007500,0x00528F,0x00528F,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500],
-                          [0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x00528F,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500],
-                          [0x007500,0x007500,0x007500,0x007500,0x007500,0x00528F,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500],
-                          [0x007500,0x007500,0x007500,0x007500,0x007500,0x00528F,0x00528F,0x007500,0x007500,0x0B4700,0x0B4700,0x007500,0x007500,0x007500,0x007500,0x007500],
-                          [0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x0B4700,0x0B4700,0x0B4700,0x007500,0x007500,0x007500,0x007500,0x007500],
-                          [0x007500,0x007500,0x007500,0x007500,0x007500,0x0B4700,0x0B4700,0x0B4700,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500],
-                          [0x007500,0x007500,0x007500,0x007500,0x007500,0x0B4700,0x0B4700,0x007500,0x007500,0x00528F,0x00528F,0x007500,0x007500,0x007500,0x007500,0x007500],
-                          [0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x00528F,0x007500,0x007500,0x007500,0x007500,0x007500],
-                          [0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x00528F,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500,0x007500]];
+        this.graphics2 = this.add.graphics();
 
         this.graphics.setDefaultStyles({
             lineStyle: {
@@ -41,46 +33,101 @@ export class MainMenu extends Scene {
             },
         });
 
-        this.bird = new Bird(this, [400, 400], "placeholder");
-        this.add.existing(this.bird);
+        this.graphics2.setDefaultStyles({
+            lineStyle: {
+                width: 1,
+                color: 0x000000,
+                alpha: 1,
+            },
+            fillStyle: {
+                color: 0xffffff,
+                alpha: 1,
+            },
+        });
 
-        this.text = this.add.text(40, 40, "Water: 0", {color: "white", stroke: "black", strokeThickness: 4, fontSize: 32});
+        let bird = new Bird(this, [400, 400], "placeholder");
+        this.add.existing(bird);
+        gameState.addBird(bird, true);
+
+        let bird2 = new Bird(this, [400, 400], "placeholder");
+        this.add.existing(bird2);
+        gameState.addBird(bird2, true);
+
+        this.endTurnButton = this.add.sprite(900, 700, "end-turn");
+        this.endTurnButton.scale = 0.5;
+
+        // this.endTurnButton.on("pointerdown", () => {
+        //     this.endTurnButton.setTexture("end-turn-clicked")
+        // })
+
+        // this.endTurnButton.on("pointerup", () => {
+        //     this.endTurnButton.setTexture("end-turn")
+        //     gameState.turnQueue.nextTurn();
+        // })
+
+        this.text = this.add.text(40, 40, "Water: 0", {
+            color: "white",
+            stroke: "black",
+            strokeThickness: 4,
+            fontSize: 26,
+        });
+
+        this.text2 = this.add.text(40, 65, "Movement: 0", {
+            color: "white",
+            stroke: "black",
+            strokeThickness: 4,
+            fontSize: 26,
+        });
+
+        this.input.enable(this.endTurnButton)
+
+        gameState.turnQueue.startGame();
     }
 
     update(_time: number, delta: number) {
-        this.graphics.clear();
-        let r = this.grid.tileSize / 2.0;
-        let [hx, hy] = this.grid.worldToTile([this.input.x, this.input.y]);
-        let [bx, by] = this.grid.worldToTile([this.bird.x, this.bird.y]);
-        for (let x = 0; x < 16; x++) {
-            for (let y = 0; y < 12; y++) {
-                let [px, py] = this.grid.tileCenter([x, y]);
-                if (bx == x && by == y) {
-                    this.graphics.fillStyle(0xff0000, 1)
-                } else {
-                    this.graphics.fillStyle(0xffffff, 1)
-                }
+        gameState.drawGrid(this.graphics);
 
-                this.graphics.beginPath();
-                for (let i = 0; i < 6; i++) {
-                    this.graphics.lineTo(
-                        px + r * Math.sin((i * Math.PI) / 3),
-                        py + r * Math.cos((i * Math.PI) / 3)
-                    );
-                }
-                this.graphics.closePath();
-                this.graphics.strokePath();
+        let mousePointer = this.input.mousePointer;
+        let clicked = mousePointer.leftButtonDown();
+        let passthrough = true;
 
-                if (!(x == hx && y == hy) && !(x == bx && y == by)) {
-                    this.graphics.fillStyle(this.gridColor[y][x], 1);
+        if (this.endTurnButton.getBounds().contains(mousePointer.x, mousePointer.y)) {
+            if (clicked && this.lastClicked == false) {
+                this.uiClick = "end-turn"
+                this.endTurnButton.setTexture("end-turn-clicked")
+            }
+
+            if (this.uiClick == "end-turn") {
+                passthrough = false;
+                if (!clicked) {
+                    this.uiClick = null;
+                    this.endTurnButton.setTexture("end-turn")
+                    gameState.turnQueue.nextTurn();
                 }
-                this.graphics.fillPath();
             }
         }
-        this.graphics.update();
 
-        this.bird.update(delta, this.grid, this.gridColor[by][bx]);
-        let tx = "Water: " + Math.floor(this.bird.water).toFixed(0)
-        this.text.setText(tx)
+
+        this.lastClicked = clicked;
+
+        gameState.updateBirds(delta, clicked && passthrough);
+        gameState.drawTrail(this.graphics2);
+        this.updateText()
+    }
+
+    updateText() {
+        let tx =
+            "Water: " +
+            Math.floor(
+                gameState.turnQueue.getCurrentTurn().bird.water
+            ).toFixed(0);
+        this.text.setText(tx);
+
+        let tx2 =
+            "Movement: " +
+            Math.floor(
+                (gameState.turnQueue.getCurrentTurn().bird.remainingMovement / MOVEMENT_PER_TURN) * 100
+            ).toFixed(0) + "%";
+        this.text2.setText(tx2);
     }
 }
