@@ -1,6 +1,7 @@
 import { Scene } from "phaser";
 import { Bird, MOVEMENT_PER_TURN } from "../classes/Bird";
 import { gameState as gameState } from "../classes/GameManager";
+import { Enemy } from "../classes/Enemy";
 
 export class MainMenu extends Scene {
     graphics: Phaser.GameObjects.Graphics;
@@ -52,6 +53,10 @@ export class MainMenu extends Scene {
         let bird2 = new Bird(this, [400, 400], "placeholder");
         this.add.existing(bird2);
         gameState.addBird(bird2, true);
+
+        let enemy = new Enemy(this, [800, 200], "placeholder");
+        this.add.existing(enemy);
+        gameState.addBird(enemy, false);
 
         this.endTurnButton = this.add.sprite(900, 700, "end-turn");
         this.endTurnButton.scale = 0.5;
