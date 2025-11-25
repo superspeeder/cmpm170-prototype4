@@ -9,8 +9,10 @@ export class GameState {
     grid: HexGrid;
     gridColor: number[][];
     birds: Bird[];
+    idCounter: integer;
 
     constructor() {
+        this.idCounter = 1;
         this.turnQueue = new TurnQueue([]);
         this.grid = new HexGrid(128);
         this.gridColor = [
@@ -117,6 +119,10 @@ export class GameState {
 
     drawTrail(graphics: Phaser.GameObjects.Graphics) {
         graphics.clear()
+        let turn = this.turnQueue.getCurrentTurn()
+        if (turn == undefined) {
+            return;
+        }
         let trail = this.turnQueue.getCurrentTurn().bird.trail
         if (trail.length == 0) return;
 
@@ -128,6 +134,21 @@ export class GameState {
             [px, py] = [x, y];
         });
         graphics.update();
+    }
+
+    onBirdKill(bird: Bird) {
+        for (var i = 0 ; i < this.birds.length ; i++) {
+            if (this.birds[i].id == bird.id) {
+                this.birds.splice(i, 1)
+                break;
+            }
+        }
+
+        this.turnQueue.removeTurn(bird)
+
+        if (this.birds.length == 0) {
+            this.scene!!.scene.start("GameOver")
+        }
     }
 }
 

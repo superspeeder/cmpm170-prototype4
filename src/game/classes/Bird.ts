@@ -34,6 +34,7 @@ export class Bird extends Phaser.GameObjects.Sprite {
     remainingMovement: number;
     overGridColor: number;
     trail: [number,number][];
+    id: integer;
 
     constructor(
         scene: Phaser.Scene,
@@ -42,9 +43,10 @@ export class Bird extends Phaser.GameObjects.Sprite {
     ) {
         super(scene, x, y, texture);
         this.keys = this.scene.input.keyboard!!.createCursorKeys();
-        this.water = 0;
+        this.water = STARTING_WATER;
         this.activeBird = false;
         this.trail = []
+        this.id = gameState.idCounter++;
     }
 
     snapToHexGrid(grid: HexGrid) {
@@ -96,11 +98,23 @@ export class Bird extends Phaser.GameObjects.Sprite {
             this.water += 1;
             this.water = Math.min(50, this.water);
         } else {
-            this.water -= 0.25;
+            this.water -= 0.5;
             this.water = Math.max(0, this.water);
         }
         this.trail = []
+
+        if (this.water <= 0) {
+            this.kill();
+        }
     }
+
+    kill() {
+        this.removeFromDisplayList();
+        this.removeFromUpdateList();
+        gameState.onBirdKill(this);
+    }
+
 }
 
 export const MOVEMENT_PER_TURN: number = 350;
+export const STARTING_WATER: number = 5;

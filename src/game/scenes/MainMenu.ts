@@ -117,12 +117,17 @@ export class MainMenu extends Scene {
         gameState.updateBirds(delta, clicked && passthrough, camera);
         gameState.drawTrail(this.graphics2);
 
-        camera.centerOn(gameState.turnQueue.getCurrentTurn().bird.x, gameState.turnQueue.getCurrentTurn().bird.y)
+        let turn = gameState.turnQueue.getCurrentTurn();
+        if (turn !== undefined) {
+            camera.centerOn(turn.bird.x, turn.bird.y)
+        }
 
         this.updateText()
     }
 
     updateText() {
+        let turn = gameState.turnQueue.getCurrentTurn();
+        if (turn === undefined) return;
         let tx =
             "Water: " +
             Math.floor(
