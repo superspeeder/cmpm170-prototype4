@@ -35,6 +35,7 @@ export class Bird extends Phaser.GameObjects.Sprite {
     overGridColor: number;
     trail: [number,number][];
     id: integer;
+    isEnemy: boolean; 
 
     constructor(
         scene: Phaser.Scene,
@@ -47,6 +48,7 @@ export class Bird extends Phaser.GameObjects.Sprite {
         this.activeBird = false;
         this.trail = []
         this.id = gameState.idCounter++;
+        this.isEnemy = false;
     }
 
     snapToHexGrid(grid: HexGrid) {
