@@ -10,6 +10,7 @@ export class GameState {
     gridColor: number[][];
     birds: Bird[];
     idCounter: integer;
+    territories: [number, number, number, number[][]][]; // y, x, size, neighbors
 
     constructor() {
         this.idCounter = 1;
@@ -23,13 +24,13 @@ export class GameState {
             ],
             [
                 0x007500, 0x007500, 0x00528f, 0x0b4700, 0x0b4700, 0x0b4700,
-                0x007500, 0x007500, 0x007500, 0x007500, 0x0b4700, 0x0b4700,
+                0x007500, 0xC217B3, 0x007500, 0x007500, 0x0b4700, 0x0b4700,
                 0x00528f, 0x007500, 0x007500, 0x007500,
             ],
             [
                 0x007500, 0x007500, 0x007500, 0x0b4700, 0x0b4700, 0x0b4700,
                 0x0b4700, 0x007500, 0x007500, 0x007500, 0x007500, 0x0b4700,
-                0x007500, 0x007500, 0x007500, 0x007500,
+                0x007500, 0x007500, 0xC217B3, 0x007500,
             ],
             [
                 0x007500, 0x007500, 0x007500, 0x0b4700, 0x0b4700, 0x0b4700,
@@ -43,7 +44,7 @@ export class GameState {
             ],
             [
                 0x007500, 0x007500, 0x007500, 0x007500, 0x007500, 0x00528f,
-                0x007500, 0x007500, 0x007500, 0x007500, 0x007500, 0x007500,
+                0x007500, 0xC217B3, 0x007500, 0x007500, 0x007500, 0x007500,
                 0x007500, 0x007500, 0x007500, 0x007500,
             ],
             [
@@ -52,14 +53,14 @@ export class GameState {
                 0x007500, 0x007500, 0x007500, 0x007500,
             ],
             [
-                0x007500, 0x007500, 0x007500, 0x007500, 0x007500, 0x007500,
+                0x007500, 0x007500, 0xC217B3, 0x007500, 0x007500, 0x007500,
                 0x007500, 0x007500, 0x0b4700, 0x0b4700, 0x0b4700, 0x007500,
                 0x007500, 0x007500, 0x007500, 0x007500,
             ],
             [
                 0x007500, 0x007500, 0x007500, 0x007500, 0x007500, 0x0b4700,
                 0x0b4700, 0x0b4700, 0x007500, 0x007500, 0x007500, 0x007500,
-                0x007500, 0x007500, 0x007500, 0x007500,
+                0x007500, 0xC217B3, 0x007500, 0x007500,
             ],
             [
                 0x007500, 0x007500, 0x007500, 0x007500, 0x007500, 0x0b4700,
@@ -78,6 +79,7 @@ export class GameState {
             ],
         ];
         this.birds = [];
+        this.territories = [[1, 7, 0, [[1, 7]]], [2, 14, 0, [[2, 14]]], [5, 7, 0, [[5, 7]]], [7, 2, 0, [[7, 2]]], [9, 13, 0, [[9, 13]]]];
     }
 
     addBird(bird: Bird, player: boolean) {
@@ -148,6 +150,50 @@ export class GameState {
 
         if (this.birds.length == 0) {
             this.scene!!.scene.start("GameOver")
+        }
+    }
+
+    expand(territory: [number, number, number, number[][]], territoryIndex: number) {
+        if (2 > territory[2]) {
+            this.spreadTerritory(territory, territoryIndex);
+            territory[3].forEach(([y, x]) => {
+                if (x >= 0 && x < 16 && y >= 0 && y < 12) {
+                    if (this.gridColor[y][x] == 0x007500) {
+                        this.gridColor[y][x] = 0xC217B3;
+                    }
+                    
+                }  
+            });
+        }
+    }
+
+    spreadTerritory(territory: [number, number, number, number[][]], territoryIndex: number) {
+        let neighbors = territory[3];
+        let x = territory[1];
+        let y = territory[0];
+        let size = territory[2];
+        if (size < 2) {
+            if (size < 1) {
+                this.addtileNeighbors(y, x, neighbors);
+            }
+            else {
+                neighbors.forEach(([ny, nx]) => {
+                    this.addtileNeighbors(ny, nx, neighbors);
+                });
+            }
+        }
+        size += 1;
+        neighbors = Array.from(new Set(neighbors));
+        this.territories[territoryIndex] = [y, x, size, neighbors];
+    }
+
+    addtileNeighbors(y: number, x: number, neighbors: number[][]) {
+        if (y % 2 == 0) {
+            neighbors.push([y, x - 1], [y, x + 1], [y - 1, x - 1], [y - 1, x], [y + 1, x - 1], [y + 1, x]);
+        }
+
+        else {
+            neighbors.push([y, x - 1], [y, x + 1], [y - 1, x], [y - 1, x + 1], [y + 1, x], [y + 1, x + 1]);
         }
     }
 }

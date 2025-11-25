@@ -93,6 +93,15 @@ export class Bird extends Phaser.GameObjects.Sprite {
         this.remainingMovement = 0;
         this.snapToHexGrid(gameState.grid)
 
+        let [birdGridX, birdGridY] = gameState.grid.worldToTile([this.x, this.y]);
+    
+        for (let i = 0; i < gameState.territories.length; i++) {
+            let territory = gameState.territories[i];
+            if (territory[0] === birdGridY && territory[1] === birdGridX) {
+                gameState.expand(territory, i);
+                break;
+            }
+        }
         
         if (this.overGridColor == 0x00528f) {
             this.water += 1;
