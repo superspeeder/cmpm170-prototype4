@@ -1,26 +1,51 @@
-import { Bird } from "./Bird";
+import {Bird} from "./Bird";
+import {Scene} from "phaser";
+import TweenBuilderConfig = Phaser.Types.Tweens.TweenBuilderConfig;
+
+export interface TurnAction {
+
+}
+
+export interface TurnTarget {
+    startTurn(): void;
+
+    endTurn(): void;
+
+    turnAnimation(scene: Scene, to: Turn): Phaser.Types.Tweens.TweenBuilderConfig | Phaser.Types.Tweens.TweenChainBuilderConfig | undefined;
+
+    id: number;
+    water: number;
+}
 
 export class Turn {
-    bird: Bird
+    target: TurnTarget
     isPlayerTurn: boolean
 
-    constructor(bird: Bird, isPlayerTurn: boolean) {
-        this.bird = bird
+    turnActions: TurnAction[]
+
+    constructor(target: TurnTarget, isPlayerTurn: boolean) {
+        this.target = target
         this.isPlayerTurn = isPlayerTurn
     }
 
     startTurn() {
-        this.bird.startTurn();
+        this.target.startTurn();
     }
 
     endTurn() {
-        this.bird.endTurn();
+        this.target.endTurn();
     }
+}
+
+export interface TurnAnimationTarget {
+    turnAnimation(scene: Scene, from: Turn, to: Turn): Phaser.Types.Tweens.TweenBuilderConfig | Phaser.Types.Tweens.TweenChainBuilderConfig
 }
 
 export class TurnQueue {
     turns: Turn[]
     currentTurn: integer
+
+    turnAnimationTargets: TurnAnimationTarget[]
 
     inTransition: boolean
 
@@ -28,6 +53,11 @@ export class TurnQueue {
         this.turns = turns
         this.currentTurn = 0
         this.inTransition = false;
+        this.turnAnimationTargets = []
+    }
+
+    addTurnAnimationTarget(target: TurnAnimationTarget) {
+        this.turnAnimationTargets.push(target)
     }
 
     startGame() {
@@ -41,7 +71,11 @@ export class TurnQueue {
         return this.turns[this.currentTurn]
     }
 
-    nextTurn(): Turn | null {
+    nextTurn(scene: Scene) {
+        if (this.inTransition) {
+            return;
+        } // refuse to do anything if the turn change is currently happening
+
         if (this.currentTurn >= this.turns.length) {
             this.currentTurn = 0;
         }
@@ -49,26 +83,60 @@ export class TurnQueue {
         this.inTransition = true;
         if (this.getCurrentTurn() == undefined) {
             this.inTransition = false;
-            return null;
+            return;
         }
 
+        let nextTurn = this.turns[(this.currentTurn + 1) % this.turns.length];
         this.getCurrentTurn().endTurn()
-        this.currentTurn = (this.currentTurn + 1) % this.turns.length
-        if (this.turns.length == 0) {
-            this.inTransition = false;
-            return null;
+
+
+        let tweens = this.turnAnimationTargets.map(target => target.turnAnimation(scene, this.turns[this.currentTurn], nextTurn));
+        let turnTween = this.turns[this.currentTurn].target.turnAnimation(scene, nextTurn);
+        if (turnTween !== undefined) {
+            tweens.push(turnTween);
         }
-        this.getCurrentTurn().startTurn()
-        return this.getCurrentTurn()
+
+        tweens.push({
+            targets: this,
+            onComplete: () => {
+                this.currentTurn = (this.currentTurn + 1) % this.turns.length
+                if (this.turns.length == 0) {
+                    this.inTransition = false;
+                    return;
+                }
+                this.getCurrentTurn().startTurn()
+                this.inTransition = false;
+            },
+            duration: 1,
+        });
+
+        let tweens2 = tweens.flatMap(t => {
+            if (t.tweens != undefined) {
+                return t.tweens as TweenBuilderConfig[]
+            }
+            return t
+        }).map((t) => {
+            t.paused = false;
+            return t;
+        })
+
+        // tweens2[0].paused = true;
+
+        scene.tweens.chain({targets: null, tweens: tweens2});
+        // chain.play()
+    }
+
+    isInTurn() {
+        return !this.inTransition;
     }
 
     addTurnToQueue(turn: Turn) {
         this.turns.push(turn)
     }
-    
+
     removeTurn(bird: Bird) {
-        for (var i = 0 ; i < this.turns.length ; i++) {
-            if (this.turns[i].bird.id == bird.id) {
+        for (var i = 0; i < this.turns.length; i++) {
+            if (this.turns[i].target.id == bird.id) {
                 if (this.currentTurn == i) {
                     if (!this.inTransition)
                         this.getCurrentTurn().endTurn()
@@ -80,7 +148,7 @@ export class TurnQueue {
                     if (!this.inTransition)
                         this.getCurrentTurn().startTurn()
                 }
-                
+
                 if (this.currentTurn >= i) {
                     this.currentTurn -= 1; // shift down 1 index
                 }

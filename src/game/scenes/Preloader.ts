@@ -34,10 +34,9 @@ export class Preloader extends Scene
         this.load.setPath('assets');
 
         this.load.image('logo', 'logo.png');
-        this.load.image('placeholder', 'placeholder.png');
-        this.load.image('placeholder-active', 'placeholder-active.png');
-        this.load.image('end-turn', 'end_turn.png');
-        this.load.image('end-turn-clicked', 'end_turn_clicked.png');
+        images_to_load.forEach(([name, path]) => {
+            this.load.image(name, path);
+        })
     }
 
     create ()
@@ -47,5 +46,11 @@ export class Preloader extends Scene
 
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
         this.scene.start('MainMenu');
+        images_to_load.forEach(([name, _]) => {
+            this.textures.get(name).setFilter(Phaser.Textures.FilterMode.NEAREST);
+        });
     }
 }
+
+
+const images_to_load: [string, string][] = [['placeholder', 'placeholder.png'], ['placeholder-active', 'placeholder-active.png'], ['end-turn', 'end_turn.png'], ['end-turn-clicked', 'end_turn_clicked.png'], ['water-container-water', 'water_container_water.png'], ['water-container-container', 'water_container_container.png'], ['water-container-backing', 'water_container_backing.png']]

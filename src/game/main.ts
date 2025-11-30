@@ -9,17 +9,23 @@ import { Preloader } from './scenes/Preloader';
 //  https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
 const config: Phaser.Types.Core.GameConfig = {
     type: AUTO,
-    width: 1024,
-    height: 768,
+    width: 1024 * 2,
+    height: 768 * 2,
     parent: 'game-container',
     backgroundColor: '#028af8',
+    antialias: true,
+    antialiasGL: true,
     scene: [
         Boot,
         Preloader,
         MainMenu,
         MainGame,
         GameOver
-    ]
+    ],
+    scale: {
+        mode: Phaser.Scale.HEIGHT_CONTROLS_WIDTH,
+        autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
+    },
 };
 
 const StartGame = (parent: string) => {

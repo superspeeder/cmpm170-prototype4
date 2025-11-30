@@ -29,14 +29,16 @@ export class Enemy extends Bird {
         _mouseClicked: boolean,
         camera: Phaser.Cameras.Scene2D.Camera
     ){
-        if (!this.activeBird) return; 
+        if (!this.activeBird) return;
+
+        gameState.centerCamera(this.x, this.y);
 
         const playerBirds = gameState.birds.filter(b => !b.isEnemy);
         if (playerBirds.length === 0){
             this.overGridColor = gridColor;
             this.remainingMovement = 0;
             this.activeBird = false; 
-            gameState.turnQueue.nextTurn();
+            gameState.turnQueue.nextTurn(this.scene);
             return; 
         }
 
@@ -57,8 +59,8 @@ export class Enemy extends Bird {
         if (!target || bestDist < 2) {
             this.overGridColor = gridColor;
             this.remainingMovement = 0;
-            this.activeBird = false; 
-            gameState.turnQueue.nextTurn();
+            this.activeBird = false;
+            gameState.turnQueue.nextTurn(this.scene);
             return; 
         }
         
@@ -69,7 +71,7 @@ export class Enemy extends Bird {
         const ny = vecY / magn;
 
         if (this.remainingMovement > 0){
-            const move_mag = Math.min(this.remainingMovement, delta/5.0);
+            const move_mag = Math.min(this.remainingMovement, 2.0 * delta/5.0);
             this.x += move_mag * nx;
             this.y += move_mag * ny; 
             this.remainingMovement -= move_mag;
@@ -80,7 +82,7 @@ export class Enemy extends Bird {
         this.overGridColor = gridColor; 
         if (this.remainingMovement <= 0){
             this.activeBird = false;
-            gameState.turnQueue.nextTurn(); 
+            gameState.turnQueue.nextTurn(this.scene);
         }
 
         const hit_radius = 20; 
@@ -92,7 +94,7 @@ export class Enemy extends Bird {
             }
             this.remainingMovement = 0;
             this.activeBird = false;
-            gameState.turnQueue.nextTurn();
+            gameState.turnQueue.nextTurn(this.scene);
         }
     }
 }

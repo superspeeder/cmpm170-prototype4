@@ -1,85 +1,114 @@
-import { MainMenu } from "../scenes/MainMenu";
-import { Bird } from "./Bird";
-import { HexGrid } from "./HexGrid";
-import { Turn, TurnQueue } from "./Turn";
+import {MainMenu} from "../scenes/MainMenu";
+import {Bird} from "./Bird";
+import {HexGrid} from "./HexGrid";
+import {Turn, TurnQueue} from "./Turn";
+import {WaterDisplay} from "./WaterDisplay.ts";
+
+export const GRASS_COLOR: integer = 0x007500;
+export const FOREST_COLOR: integer = 0x0b4700;
+export const WATER_COLOR: integer = 0x00528f;
+export const TERRITORY_COLOR: integer = 0xC217B3;
 
 export class GameState {
     turnQueue: TurnQueue;
     scene?: MainMenu;
     grid: HexGrid;
     gridColor: number[][];
+    worldMap: Map<[number, number], number>
     birds: Bird[];
     idCounter: integer;
     territories: [number, number, number, number[][]][]; // y, x, size, neighbors
+    cameraCenterX: number;
+    cameraCenterY: number;
+    waterDisplay: WaterDisplay;
 
     constructor() {
         this.idCounter = 1;
         this.turnQueue = new TurnQueue([]);
-        this.grid = new HexGrid(128);
+        this.grid = new HexGrid(256);
         this.gridColor = [
             [
-                0x007500, 0x00528f, 0x00528f, 0x007500, 0x007500, 0x007500,
-                0x007500, 0x007500, 0x007500, 0x007500, 0x007500, 0x007500,
-                0x007500, 0x00528f, 0x00528f, 0x007500,
+                GRASS_COLOR, WATER_COLOR, WATER_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
+                GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
+                GRASS_COLOR, WATER_COLOR, WATER_COLOR, GRASS_COLOR,
             ],
             [
-                0x007500, 0x007500, 0x00528f, 0x0b4700, 0x0b4700, 0x0b4700,
-                0x007500, 0xC217B3, 0x007500, 0x007500, 0x0b4700, 0x0b4700,
-                0x00528f, 0x007500, 0x007500, 0x007500,
+                GRASS_COLOR, GRASS_COLOR, WATER_COLOR, FOREST_COLOR, FOREST_COLOR, FOREST_COLOR,
+                GRASS_COLOR, TERRITORY_COLOR, GRASS_COLOR, GRASS_COLOR, FOREST_COLOR, FOREST_COLOR,
+                WATER_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
             ],
             [
-                0x007500, 0x007500, 0x007500, 0x0b4700, 0x0b4700, 0x0b4700,
-                0x0b4700, 0x007500, 0x007500, 0x007500, 0x007500, 0x0b4700,
-                0x007500, 0x007500, 0xC217B3, 0x007500,
+                GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, FOREST_COLOR, FOREST_COLOR, FOREST_COLOR,
+                FOREST_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, FOREST_COLOR,
+                GRASS_COLOR, GRASS_COLOR, TERRITORY_COLOR, GRASS_COLOR,
             ],
             [
-                0x007500, 0x007500, 0x007500, 0x0b4700, 0x0b4700, 0x0b4700,
-                0x007500, 0x007500, 0x00528f, 0x00528f, 0x007500, 0x007500,
-                0x007500, 0x007500, 0x007500, 0x007500,
+                GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, FOREST_COLOR, FOREST_COLOR, FOREST_COLOR,
+                GRASS_COLOR, GRASS_COLOR, WATER_COLOR, WATER_COLOR, GRASS_COLOR, GRASS_COLOR,
+                GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
             ],
             [
-                0x007500, 0x007500, 0x007500, 0x007500, 0x007500, 0x007500,
-                0x007500, 0x007500, 0x007500, 0x00528f, 0x007500, 0x007500,
-                0x007500, 0x007500, 0x007500, 0x007500,
+                GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
+                GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, WATER_COLOR, GRASS_COLOR, GRASS_COLOR,
+                GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
             ],
             [
-                0x007500, 0x007500, 0x007500, 0x007500, 0x007500, 0x00528f,
-                0x007500, 0xC217B3, 0x007500, 0x007500, 0x007500, 0x007500,
-                0x007500, 0x007500, 0x007500, 0x007500,
+                GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, WATER_COLOR,
+                GRASS_COLOR, TERRITORY_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
+                GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
             ],
             [
-                0x007500, 0x007500, 0x007500, 0x007500, 0x007500, 0x00528f,
-                0x00528f, 0x007500, 0x007500, 0x0b4700, 0x0b4700, 0x007500,
-                0x007500, 0x007500, 0x007500, 0x007500,
+                GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, WATER_COLOR,
+                WATER_COLOR, GRASS_COLOR, GRASS_COLOR, FOREST_COLOR, FOREST_COLOR, GRASS_COLOR,
+                GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
             ],
             [
-                0x007500, 0x007500, 0xC217B3, 0x007500, 0x007500, 0x007500,
-                0x007500, 0x007500, 0x0b4700, 0x0b4700, 0x0b4700, 0x007500,
-                0x007500, 0x007500, 0x007500, 0x007500,
+                GRASS_COLOR, GRASS_COLOR, TERRITORY_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
+                GRASS_COLOR, GRASS_COLOR, FOREST_COLOR, FOREST_COLOR, FOREST_COLOR, GRASS_COLOR,
+                GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
             ],
             [
-                0x007500, 0x007500, 0x007500, 0x007500, 0x007500, 0x0b4700,
-                0x0b4700, 0x0b4700, 0x007500, 0x007500, 0x007500, 0x007500,
-                0x007500, 0xC217B3, 0x007500, 0x007500,
+                GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, FOREST_COLOR,
+                FOREST_COLOR, FOREST_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
+                GRASS_COLOR, TERRITORY_COLOR, GRASS_COLOR, GRASS_COLOR,
             ],
             [
-                0x007500, 0x007500, 0x007500, 0x007500, 0x007500, 0x0b4700,
-                0x0b4700, 0x007500, 0x007500, 0x00528f, 0x00528f, 0x007500,
-                0x007500, 0x007500, 0x007500, 0x007500,
+                GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, FOREST_COLOR,
+                FOREST_COLOR, GRASS_COLOR, GRASS_COLOR, WATER_COLOR, WATER_COLOR, GRASS_COLOR,
+                GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
             ],
             [
-                0x007500, 0x007500, 0x007500, 0x007500, 0x007500, 0x007500,
-                0x007500, 0x007500, 0x007500, 0x007500, 0x00528f, 0x007500,
-                0x007500, 0x007500, 0x007500, 0x007500,
+                GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
+                GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, WATER_COLOR, GRASS_COLOR,
+                GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
             ],
             [
-                0x007500, 0x007500, 0x007500, 0x007500, 0x007500, 0x007500,
-                0x00528f, 0x007500, 0x007500, 0x007500, 0x007500, 0x007500,
-                0x007500, 0x007500, 0x007500, 0x007500,
+                GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
+                WATER_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
+                GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
             ],
         ];
+
+        this.worldMap = new Map();
+        for (let j = 0 ; j < this.gridColor.length; j++) {
+            for (let i = 0 ; i < this.gridColor[j].length; i++) {
+                this.worldMap.set([i, j], this.gridColor[j][i]);
+            }
+        }
+
         this.birds = [];
         this.territories = [[1, 7, 0, [[1, 7]]], [2, 14, 0, [[2, 14]]], [5, 7, 0, [[5, 7]]], [7, 2, 0, [[7, 2]]], [9, 13, 0, [[9, 13]]]];
+        this.cameraCenterX = 0;
+        this.cameraCenterY = 0;
+    }
+
+    centerCamera(x: number, y: number) {
+        this.cameraCenterX = x;
+        this.cameraCenterY = y;
+    }
+
+    updateCamera() {
+        this.scene!!.cameras.main.centerOn(this.cameraCenterX, this.cameraCenterY);
     }
 
     addBird(bird: Bird, player: boolean) {
@@ -90,31 +119,31 @@ export class GameState {
     drawGrid(graphics: Phaser.GameObjects.Graphics) {
         graphics.clear();
         let r = this.grid.tileSize / 2.0;
-        for (let x = 0; x < 16; x++) {
-            for (let y = 0; y < 12; y++) {
-                let [px, py] = this.grid.tileCenter([x, y]);
+        this.worldMap.forEach((color, [x, y]) => {
+            let [px, py] = this.grid.tileCenter([x, y]);
 
-                graphics.beginPath();
-                for (let i = 0; i < 6; i++) {
-                    graphics.lineTo(
-                        px + r * Math.sin((i * Math.PI) / 3),
-                        py + r * Math.cos((i * Math.PI) / 3)
-                    );
-                }
-                graphics.closePath();
-                graphics.strokePath();
-
-                graphics.fillStyle(this.gridColor[y][x], 1);
-                graphics.fillPath();
+            graphics.beginPath();
+            for (let i = 0; i < 6; i++) {
+                graphics.lineTo(
+                    px + r * Math.sin((i * Math.PI) / 3),
+                    py + r * Math.cos((i * Math.PI) / 3)
+                );
             }
-        }
+            graphics.closePath();
+            graphics.strokePath();
+
+            graphics.fillStyle(color, 1);
+            graphics.fillPath();
+        })
+        // for (let x = 0; x < 16; x++) {
+        //     for (let y = 0; y < 12; y++) {
         graphics.update();
     }
 
     updateBirds(delta: number, clicked: boolean, camera: Phaser.Cameras.Scene2D.Camera) {
         this.birds.forEach((bird) => {
             let [birdGridX, birdGridY] = this.grid.worldToTile([bird.x, bird.y])
-            let color = this.gridColor[birdGridY][birdGridX]
+            let color = this.getTile(birdGridX, birdGridY)
             bird.update(delta, this.grid, color, clicked, camera);
         })
     }
@@ -122,10 +151,11 @@ export class GameState {
     drawTrail(graphics: Phaser.GameObjects.Graphics) {
         graphics.clear()
         let turn = this.turnQueue.getCurrentTurn()
-        if (turn == undefined) {
+        if (turn == undefined || !(turn.target instanceof Bird)) {
             return;
         }
-        let trail = this.turnQueue.getCurrentTurn().bird.trail
+        let bird = turn.target as Bird;
+        let trail = bird.trail
         if (trail.length == 0) return;
 
         let [px, py] = trail[0];
@@ -139,7 +169,7 @@ export class GameState {
     }
 
     onBirdKill(bird: Bird) {
-        for (var i = 0 ; i < this.birds.length ; i++) {
+        for (var i = 0; i < this.birds.length; i++) {
             if (this.birds[i].id == bird.id) {
                 this.birds.splice(i, 1)
                 break;
@@ -158,11 +188,11 @@ export class GameState {
             this.spreadTerritory(territory, territoryIndex);
             territory[3].forEach(([y, x]) => {
                 if (x >= 0 && x < 16 && y >= 0 && y < 12) {
-                    if (this.gridColor[y][x] == 0x007500) {
-                        this.gridColor[y][x] = 0xC217B3;
+                    if (this.getTile(x, y) == GRASS_COLOR) {
+                        this.setTile(x, y, TERRITORY_COLOR);
                     }
-                    
-                }  
+
+                }
             });
         }
     }
@@ -175,8 +205,7 @@ export class GameState {
         if (size < 2) {
             if (size < 1) {
                 this.addtileNeighbors(y, x, neighbors);
-            }
-            else {
+            } else {
                 neighbors.forEach(([ny, nx]) => {
                     this.addtileNeighbors(ny, nx, neighbors);
                 });
@@ -190,12 +219,20 @@ export class GameState {
     addtileNeighbors(y: number, x: number, neighbors: number[][]) {
         if (y % 2 == 0) {
             neighbors.push([y, x - 1], [y, x + 1], [y - 1, x - 1], [y - 1, x], [y + 1, x - 1], [y + 1, x]);
-        }
-
-        else {
+        } else {
             neighbors.push([y, x - 1], [y, x + 1], [y - 1, x], [y - 1, x + 1], [y + 1, x], [y + 1, x + 1]);
         }
+    }
+
+    getTile(x: number, y: number): number {
+        return this.worldMap.get([x, y]) || GRASS_COLOR;
+    }
+
+    setTile(x: number, y: number, tile: number): void {
+        this.worldMap.set([x, y], tile);
     }
 }
 
 export var gameState: GameState = new GameState();
+
+export const TURN_TRANSITION_TIME: number = 500;

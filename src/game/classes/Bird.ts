@@ -1,7 +1,8 @@
-import { gameState } from "./GameManager";
+import {gameState, TURN_TRANSITION_TIME} from "./GameManager";
 import { HexGrid } from "./HexGrid";
+import {Turn, TurnTarget} from "./Turn.ts";
 
-export class Bird extends Phaser.GameObjects.Sprite {
+export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
     /**
      * Hummingbird instance fields
      * (this might get pretty sophisticated, these are all just ideas)
@@ -35,7 +36,9 @@ export class Bird extends Phaser.GameObjects.Sprite {
     overGridColor: number;
     trail: [number,number][];
     id: integer;
-    isEnemy: boolean; 
+    isEnemy: boolean;
+    previousTurnWater: number;
+    graphics: Phaser.GameObjects.Graphics;
 
     constructor(
         scene: Phaser.Scene,
@@ -49,15 +52,39 @@ export class Bird extends Phaser.GameObjects.Sprite {
         this.trail = []
         this.id = gameState.idCounter++;
         this.isEnemy = false;
+        this.graphics = scene.add.graphics();
     }
 
     snapToHexGrid(grid: HexGrid) {
         let [x, y] = grid.tileToWorld(grid.worldToTile([this.x, this.y]));
-        this.setPosition(x, y);
+        this.scene.tweens.add({
+            targets: this,
+            x: x,
+            y: y,
+            duration: 100,
+            ease: "Quad.easeInOut"
+        })
     }
 
-    update(delta: number, grid: HexGrid, gridColor: number, mouseClicked: boolean, camera: Phaser.Cameras.Scene2D.Camera) {
+    update(delta: number, _grid: HexGrid, gridColor: number, mouseClicked: boolean, camera: Phaser.Cameras.Scene2D.Camera) {
+        this.graphics.clear();
+
         if (!this.activeBird) return;
+        if (!gameState.turnQueue.isInTurn()) return;
+
+        gameState.centerCamera(this.x, this.y);
+
+        let offAngle = Math.PI / 4;
+        let endPoint = (this.remainingMovement / MOVEMENT_PER_TURN) * 2 * (Math.PI - offAngle);
+
+        this.graphics.lineStyle(6, 0xecec0f)
+        this.graphics.setPosition(this.x, this.y);
+        this.graphics.setRotation(offAngle * 3);
+
+        this.graphics.beginPath();
+        this.graphics.arc(0, 0, 96, 0, endPoint, false);
+        this.graphics.strokePath();
+
 
         if (mouseClicked) {
             let wp = camera.getWorldPoint(this.scene.input.x, this.scene.input.y)
@@ -68,7 +95,7 @@ export class Bird extends Phaser.GameObjects.Sprite {
             let magn = Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1]);
             let norm = [vec[0] / magn, vec[1] / magn];
             if (this.remainingMovement > 0) {
-                let move_mag = Math.min(this.remainingMovement, delta / 5.0);
+                let move_mag = Math.min(this.remainingMovement, 2 * delta / 5.0);
 
                 this.x += move_mag * norm[0];
                 this.y += move_mag * norm[1];
@@ -87,6 +114,8 @@ export class Bird extends Phaser.GameObjects.Sprite {
         this.remainingMovement = MOVEMENT_PER_TURN;
         this.trail = []
         this.setTexture("placeholder-active")
+        this.previousTurnWater = this.water;
+        gameState.centerCamera(this.x, this.y);
     }
 
     endTurn() {
@@ -106,12 +135,14 @@ export class Bird extends Phaser.GameObjects.Sprite {
         }
         
         if (this.overGridColor == 0x00528f) {
-            this.water += 1;
-            this.water = Math.min(50, this.water);
+            this.water += 2;
+            this.water = Math.min(24, this.water);
         } else {
-            this.water -= 0.5;
+            this.water -= 1;
             this.water = Math.max(0, this.water);
         }
+
+        gameState.waterDisplay.targetWater = this.water;
         this.trail = []
 
         if (this.water <= 0) {
@@ -125,7 +156,18 @@ export class Bird extends Phaser.GameObjects.Sprite {
         gameState.onBirdKill(this);
     }
 
+    turnAnimation(_scene: Phaser.Scene, to: Turn): Phaser.Types.Tweens.TweenBuilderConfig | Phaser.Types.Tweens.TweenChainBuilderConfig | undefined {
+        if (to.target instanceof Bird) {
+            return {
+                targets: gameState,
+                cameraCenterX: to.target.x,
+                cameraCenterY: to.target.y,
+                ease: 'Quad.easeInOut',
+                duration: TURN_TRANSITION_TIME,
+            };
+        }
+    }
 }
 
-export const MOVEMENT_PER_TURN: number = 350;
+export const MOVEMENT_PER_TURN: number = 700;
 export const STARTING_WATER: number = 5;
