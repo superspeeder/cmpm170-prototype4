@@ -1,4 +1,4 @@
-import {gameState, TURN_TRANSITION_TIME} from "./GameManager";
+import {gameState, TURN_TRANSITION_TIME, WATER_COLOR} from "./GameManager";
 import { HexGrid } from "./HexGrid";
 import {Turn, TurnTarget} from "./Turn.ts";
 
@@ -189,7 +189,7 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
             }
         }
         
-        if (this.overGridColor == 0x00528f) {
+        if (this.overGridColor == WATER_COLOR) {
             this.water += 2;
             this.water = Math.min(24, this.water);
         } else {
