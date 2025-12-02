@@ -40,6 +40,13 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
     previousTurnWater: number;
     graphics: Phaser.GameObjects.Graphics;
 
+    maxHealth: number;
+    health: number;
+    attackDamage: number;
+    attackRange: number; 
+    hasAttackedThisTurn: boolean; 
+    healthText?: Phaser.GameObjects.Text; 
+
     constructor(
         scene: Phaser.Scene,
         [x, y]: [number, number],
@@ -52,7 +59,14 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
         this.trail = []
         this.id = gameState.idCounter++;
         this.isEnemy = false;
+        this.maxHealth = 5;
+        this.health = this.maxHealth;
+        this.attackDamage = 2;
+        this.attackRange = 1; 
+        this.hasAttackedThisTurn = false;
+        this.createHealthText(scene);
         this.graphics = scene.add.graphics();
+        
     }
 
     snapToHexGrid(grid: HexGrid) {
@@ -64,6 +78,8 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
             duration: 100,
             ease: "Quad.easeInOut"
         })
+        this.updateHealthText();
+        gameState.updateBirdOccupancy(this); 
     }
 
     update(delta: number, _grid: HexGrid, gridColor: number, mouseClicked: boolean, camera: Phaser.Cameras.Scene2D.Camera) {
@@ -87,26 +103,58 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
 
 
         if (mouseClicked) {
-            let wp = camera.getWorldPoint(this.scene.input.x, this.scene.input.y)
-            let vec = [
-                wp.x - this.x,
-                wp.y - this.y,
-            ];
-            let magn = Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1]);
-            let norm = [vec[0] / magn, vec[1] / magn];
-            if (this.remainingMovement > 0) {
-                let move_mag = Math.min(this.remainingMovement, 2 * delta / 5.0);
+            // world-space position of the click
+            const pointer = this.scene.input.activePointer;
+            const worldPoint = camera.getWorldPoint(pointer.x, pointer.y);
 
-                this.x += move_mag * norm[0];
-                this.y += move_mag * norm[1];
-                this.remainingMovement -= move_mag;
+            // which hex was clicked?
+            const clickedTile = _grid.worldToTile([worldPoint.x, worldPoint.y]);
+            const targetBird = gameState.getBirdAtTile(clickedTile);
 
-                this.trail.push([this.x, this.y])
+            // 1) ATTACK: if there is an enemy on the clicked tile and we can attack it
+            if (
+                targetBird &&
+                targetBird !== this &&
+                targetBird.isEnemy !== this.isEnemy &&
+                this.canAttack(targetBird, _grid)
+            ) {
+                this.attack(targetBird, _grid);
+                // don’t move on the same click that we attacked
+                this.overGridColor = gridColor;
+                return;
             }
-            this.rotation = Math.atan2(norm[1], norm[0]) + Math.PI / 2;
-        }
 
+            // 2) MOVE: no valid attack target → treat click as a move command
+            if (this.remainingMovement > 0) {
+                // direction vector from bird to click
+                const vecX = worldPoint.x - this.x;
+                const vecY = worldPoint.y - this.y;
+                const magn = Math.sqrt(vecX * vecX + vecY * vecY);
+
+                // avoid NaN if click is exactly on top
+                if (magn > 0.0001) {
+                    const normX = vecX / magn;
+                    const normY = vecY / magn;
+
+                    // how far we can move this frame
+                    const moveMag = Math.min(
+                        this.remainingMovement,
+                        (2 * delta) / 5.0
+                    );
+
+                    this.x += moveMag * normX;
+                    this.y += moveMag * normY;
+                    this.remainingMovement -= moveMag;
+
+                    this.trail.push([this.x, this.y]);
+
+                    // face movement direction
+                    this.rotation = Math.atan2(normY, normX) + Math.PI / 2;
+                }
+            }
+        }
         this.overGridColor = gridColor;
+        this.updateHealthText();
    }
 
     startTurn() {
@@ -115,6 +163,7 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
         this.trail = []
         this.setTexture("placeholder-active")
         this.previousTurnWater = this.water;
+        this.hasAttackedThisTurn = false; 
         gameState.centerCamera(this.x, this.y);
     }
 
@@ -148,6 +197,7 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
         if (this.water <= 0) {
             this.kill();
         }
+        this.updateHealthText();
     }
 
     kill() {
@@ -166,6 +216,80 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
                 duration: TURN_TRANSITION_TIME,
             };
         }
+    }
+
+    canAttack(target: Bird, grid: HexGrid){
+        if (!this.activeBird) return false; 
+        if (this.hasAttackedThisTurn) return false;
+        if (this.isEnemy == target.isEnemy) return false; 
+
+        const myTile = grid.worldToTile([this.x, this.y]);
+        const targetTile = grid.worldToTile([target.x, target.y]);
+        const distance = grid.hexDistance(myTile, targetTile);
+        return distance <= this.attackRange;  
+    }
+
+    attack(target: Bird, grid: HexGrid){
+        if (!this.canAttack(target, grid)) return;
+
+        this.hasAttackedThisTurn = true;
+
+        // simple feedback: small lunge & flash
+        const scene = this.scene;
+        scene.tweens.add({
+            targets: this,
+            duration: 120,
+            x: target.x,
+            y: target.y,
+            yoyo: true
+        });
+        target.takeDamage(this.attackDamage);        
+    }
+
+    takeDamage(amount: number) {
+        this.health -= amount;
+        const originalTint = this.isEnemy ? 0xff5555 : 0xffffff;    
+        this.setTintFill(0xffffff);
+        this.scene.time.delayedCall(80, () => {
+            this.setTint(originalTint);
+        });
+
+        if (this.health <= 0) {
+            this.die();
+        } else {
+            this.updateHealthText();
+        }
+    }  
+    
+    die() {
+        // small death animation
+        const scene = this.scene;
+        scene.tweens.add({
+        targets: this,
+        alpha: 0,
+        duration: 200,
+        onComplete: () => {
+            this.destroy();
+            this.healthText?.destroy();
+        }
+        });
+
+        gameState.removeBird(this);
+    }
+
+    createHealthText(scene: Phaser.Scene) {
+        this.healthText = scene.add.text(this.x, this.y - 30, `${this.health}/${this.maxHealth}`, {
+        fontSize: '16px',
+        color: '#ffffff',
+        stroke: '#000000',
+        strokeThickness: 3
+        }).setOrigin(0.5).setDepth(1000);
+    }
+
+    updateHealthText() {
+        if (!this.healthText) return;
+        this.healthText.setText(`${this.health}/${this.maxHealth}`);
+        this.healthText.setPosition(this.x, this.y - 30);
     }
 }
 
