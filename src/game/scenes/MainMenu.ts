@@ -63,7 +63,7 @@ export class MainMenu extends Scene {
         this.add.existing(enemy);
         gameState.addBird(enemy, false);
 
-        this.endTurnButton = this.add.sprite(1800, 1400, "end-turn");
+        this.endTurnButton = this.add.sprite(1700, 1400, "end-turn");
         this.endTurnButton.setScrollFactor(0)
 
         // this.endTurnButton.on("pointerdown", () => {
