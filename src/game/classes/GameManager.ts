@@ -225,7 +225,9 @@ export class GameState {
     }
 
     getTile(x: number, y: number): number {
-        return this.worldMap.get([x, y]) || GRASS_COLOR;
+        const tile = this.worldMap.get([x, y]);
+        if (tile === undefined || tile === null) return GRASS_COLOR;
+        return tile;
     }
 
     setTile(x: number, y: number, tile: number): void {
