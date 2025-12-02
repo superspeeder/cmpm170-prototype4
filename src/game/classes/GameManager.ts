@@ -20,7 +20,7 @@ export class GameState {
     scene?: MainMenu;
     grid: HexGrid;
     gridColor: number[][];
-    worldMap: Map<[number, number], number>
+    worldMap: Map<number, number>
     birds: Bird[];
     idCounter: integer;
     territories: [number, number, number, number[][]][]; // y, x, size, neighbors
@@ -100,7 +100,7 @@ export class GameState {
         this.worldMap = new Map();
         for (let j = 0 ; j < this.gridColor.length; j++) {
             for (let i = 0 ; i < this.gridColor[j].length; i++) {
-                this.worldMap.set([i, j], this.gridColor[j][i]);
+                this.worldMap.set((i << 16) | j, this.gridColor[j][i]);
             }
         }
 
@@ -121,13 +121,15 @@ export class GameState {
 
     addBird(bird: Bird, player: boolean) {
         this.turnQueue.addTurnToQueue(new Turn(bird, player));
+        this.updateBirdOccupancy(bird);
         this.birds.push(bird);
     }
 
     drawGrid(graphics: Phaser.GameObjects.Graphics) {
         graphics.clear();
         let r = this.grid.tileSize / 2.0;
-        this.worldMap.forEach((color, [x, y]) => {
+        this.worldMap.forEach((color, p) => {
+            let [x, y] = parsePosIndex(p);
             let [px, py] = this.grid.tileCenter([x, y]);
 
             graphics.beginPath();
@@ -149,10 +151,12 @@ export class GameState {
     }
 
     updateBirds(delta: number, clicked: boolean, camera: Phaser.Cameras.Scene2D.Camera) {
+        console.log("Hello!")
         this.birds.forEach((bird) => {
             let [birdGridX, birdGridY] = this.grid.worldToTile([bird.x, bird.y])
             let color = this.getTile(birdGridX, birdGridY)
             bird.update(delta, this.grid, color, clicked, camera);
+            console.log(color)
         })
     }
 
@@ -233,13 +237,13 @@ export class GameState {
     }
 
     getTile(x: number, y: number): number {
-        const tile = this.worldMap.get([x, y]);
+        const tile = this.worldMap.get(makePosIndex(x, y));
         if (tile === undefined || tile === null) return GRASS_COLOR;
         return tile;
     }
 
     setTile(x: number, y: number, tile: number): void {
-        this.worldMap.set([x, y], tile);
+        this.worldMap.set(makePosIndex(x, y), tile);
     }
 
     registerBird(bird: Bird) {
@@ -275,6 +279,20 @@ export class GameState {
     getEnemyBirds(isEnemy: boolean): Bird[] {
         return this.birds.filter(b => b.isEnemy !== isEnemy);
     }
+}
+
+function makePosIndex(x: number, y: number): number {
+    const xs = Math.sign(x);
+    const ys = Math.sign(y);
+    return (x & 0x7fff) << 16 | (xs < 0 ? 0x80000000 : 0) | (y & 0x7fff) | (ys < 0 ? 0x8000 : 0);
+}
+
+function parsePosIndex(p: number): [number, number] {
+    const xs = (p & 0x80000000) == 0x80000000 ? -1 : 1;
+    const ys = (p & 0x8000) == 0x8000 ? -1 : 1;
+    const x = (p >> 16) & 0x7fff;
+    const y = p & 0x7fff;
+    return [xs == -1 ? -x : x, ys == -1 ? -y : y];
 }
 
 export var gameState: GameState = new GameState();
