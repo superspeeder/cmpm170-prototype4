@@ -53,4 +53,4 @@ export class Preloader extends Scene
 }
 
 
-const images_to_load: [string, string][] = [['placeholder', 'placeholder.png'], ['placeholder-active', 'placeholder-active.png'], ['end-turn', 'end_turn.png'], ['end-turn-clicked', 'end_turn_clicked.png'], ['water-container-water', 'water_container_water.png'], ['water-container-container', 'water_container_container.png'], ['water-container-backing', 'water_container_backing.png']]
+const images_to_load: [string, string][] = [['hummingbird-active', "Mr.GPT'sBird.png"], ['hummingbird', "Mr.GPT'sBirdSitting.png"], ['placeholder', 'placeholder.png'], ['placeholder-active', 'placeholder-active.png'], ['end-turn', 'end_turn.png'], ['end-turn-clicked', 'end_turn_clicked.png'], ['water-container-water', 'water_container_water.png'], ['water-container-container', 'water_container_container.png'], ['water-container-backing', 'water_container_backing.png']]
