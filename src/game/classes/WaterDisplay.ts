@@ -36,7 +36,7 @@ export class WaterDisplay extends Phaser.GameObjects.Container implements TurnAn
                 targets: gameState.waterDisplay,
                 ease: 'Quad.easeIn',
                 duration: 200,
-                x: "-=100",
+                x: "-=200",
             },
             {
                 targets: this,
@@ -50,7 +50,7 @@ export class WaterDisplay extends Phaser.GameObjects.Container implements TurnAn
                 targets: gameState.waterDisplay,
                 ease: 'Quad.easeIn',
                 duration: 200,
-                x: "+=100",
+                x: "+=200",
             }
         ];
 

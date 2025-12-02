@@ -298,6 +298,24 @@ export class GameState {
     getEnemyBirds(isEnemy: boolean): Bird[] {
         return this.birds.filter(b => b.isEnemy !== isEnemy);
     }
+
+    checkWin(isPlayerTurn: boolean) {
+        let ok = true;
+        this.worldMap.forEach((value, key) => {
+            if (value == WATER_COLOR || value == GRASS_COLOR) {
+                if (!this.territoryMap.has(key) || this.territoryMap.get(key) != TERRITORY_COLOR) {
+                    ok = false;
+                }
+            }
+        });
+        if (ok) {
+            if (isPlayerTurn) {
+                this.scene!!.scene.start("Win");
+            } else {
+                this.scene!!.scene.start("GameOver");
+            }
+        }
+    }
 }
 
 function makePosIndex(x: number, y: number): number {
