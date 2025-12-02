@@ -1,6 +1,7 @@
 import {Bird} from "./Bird";
 import {Scene} from "phaser";
 import TweenBuilderConfig = Phaser.Types.Tweens.TweenBuilderConfig;
+import { gameState } from "./GameManager";
 
 export interface TurnAction {
 
@@ -34,6 +35,7 @@ export class Turn {
 
     endTurn() {
         this.target.endTurn();
+        gameState.checkWin(this.isPlayerTurn);
     }
 }
 
