@@ -22,7 +22,7 @@ const builder = async () => {
         bundle: true,
         minify: true,
         sourcemap: false,
-        target: ['chrome58', 'firefox57', 'safari11', 'edge16'],
+        target: ['chrome58', 'firefox57', 'safari11', 'edge18'],
         outfile: './dist/bundle.min.js',
         plugins: [
             clean({

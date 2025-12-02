@@ -1,0 +1,588 @@
+{ "columns":0,
+ "grid":
+    {
+     "height":1,
+     "orientation":"orthogonal",
+     "width":1
+    },
+ "margin":0,
+ "name":"TileMap",
+ "spacing":0,
+ "tilecount":95,
+ "tiledversion":"1.10.2",
+ "tileheight":128,
+ "tiles":[
+        {
+         "id":0,
+         "image":"EverHex-Forest Lite/Forest/363.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":1,
+         "image":"EverHex-Forest Lite/Forest/361.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":2,
+         "image":"EverHex-Forest Lite/Forest/360.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":3,
+         "image":"EverHex-Forest Lite/Forest/354.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":4,
+         "image":"EverHex-Forest Lite/Forest/351.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":5,
+         "image":"EverHex-Forest Lite/Forest/350.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":6,
+         "image":"EverHex-Forest Lite/Forest/347.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":7,
+         "image":"EverHex-Forest Lite/Forest/343.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":8,
+         "image":"EverHex-Forest Lite/Forest/340.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":9,
+         "image":"EverHex-Forest Lite/Forest/339.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":10,
+         "image":"EverHex-Forest Lite/Forest/338.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":11,
+         "image":"EverHex-Forest Lite/Forest/337.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":12,
+         "image":"EverHex-Forest Lite/Forest/336.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":13,
+         "image":"EverHex-Forest Lite/Forest/335.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":14,
+         "image":"EverHex-Forest Lite/Forest/334.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":15,
+         "image":"EverHex-Forest Lite/Forest/324.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":16,
+         "image":"EverHex-Forest Lite/Forest/317.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":17,
+         "image":"EverHex-Forest Lite/Forest/316.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":18,
+         "image":"EverHex-Forest Lite/Forest/314.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":19,
+         "image":"EverHex-Forest Lite/Forest/313.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":20,
+         "image":"EverHex-Forest Lite/Forest/312.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":21,
+         "image":"EverHex-Forest Lite/Forest/306.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":22,
+         "image":"EverHex-Forest Lite/Forest/294.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":23,
+         "image":"EverHex-Forest Lite/Forest/286.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":24,
+         "image":"EverHex-Forest Lite/Forest/285.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":25,
+         "image":"EverHex-Forest Lite/Forest/283.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":26,
+         "image":"EverHex-Forest Lite/Forest/282.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":27,
+         "image":"EverHex-Forest Lite/Forest/281.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":28,
+         "image":"EverHex-Forest Lite/Forest/278.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":29,
+         "image":"EverHex-Forest Lite/Forest/277.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":30,
+         "image":"EverHex-Forest Lite/Forest/274.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":31,
+         "image":"EverHex-Forest Lite/Forest/273.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":32,
+         "image":"EverHex-Forest Lite/Forest/272.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":33,
+         "image":"EverHex-Forest Lite/Forest/271.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":34,
+         "image":"EverHex-Forest Lite/Forest/270.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":35,
+         "image":"EverHex-Forest Lite/Forest/267.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":36,
+         "image":"EverHex-Forest Lite/Forest/265.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":37,
+         "image":"EverHex-Forest Lite/Forest/261.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":38,
+         "image":"EverHex-Forest Lite/Forest/259.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":39,
+         "image":"EverHex-Forest Lite/Forest/256.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":40,
+         "image":"EverHex-Forest Lite/Forest/249.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":41,
+         "image":"EverHex-Forest Lite/Forest/248.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":42,
+         "image":"EverHex-Forest Lite/Forest/243.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":43,
+         "image":"EverHex-Forest Lite/Forest/237.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":44,
+         "image":"EverHex-Forest Lite/Forest/234.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":45,
+         "image":"EverHex-Forest Lite/Forest/231.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":46,
+         "image":"EverHex-Forest Lite/Forest/230.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":47,
+         "image":"EverHex-Forest Lite/Forest/222.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":48,
+         "image":"EverHex-Forest Lite/Forest/221.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":49,
+         "image":"EverHex-Forest Lite/Forest/220.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":50,
+         "image":"EverHex-Forest Lite/Forest/219.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":51,
+         "image":"EverHex-Forest Lite/Forest/218.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":52,
+         "image":"EverHex-Forest Lite/Forest/217.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":53,
+         "image":"EverHex-Forest Lite/Forest/214.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":54,
+         "image":"EverHex-Forest Lite/Forest/196.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":55,
+         "image":"EverHex-Forest Lite/Forest/193.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":56,
+         "image":"EverHex-Forest Lite/Forest/184.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":57,
+         "image":"EverHex-Forest Lite/Forest/179.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":58,
+         "image":"EverHex-Forest Lite/Forest/178.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":59,
+         "image":"EverHex-Forest Lite/Forest/177.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":60,
+         "image":"EverHex-Forest Lite/Forest/168.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":61,
+         "image":"EverHex-Forest Lite/Forest/166.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":62,
+         "image":"EverHex-Forest Lite/Forest/163.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":63,
+         "image":"EverHex-Forest Lite/Forest/132.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":64,
+         "image":"EverHex-Forest Lite/Forest/119.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":65,
+         "image":"EverHex-Forest Lite/Forest/99.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":66,
+         "image":"EverHex-Forest Lite/Forest/98.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":67,
+         "image":"EverHex-Forest Lite/Forest/95.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":68,
+         "image":"EverHex-Forest Lite/Forest/35.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":69,
+         "image":"EverHex-Forest Lite/Forest/33.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":70,
+         "image":"EverHex-Forest Lite/Forest/31.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":71,
+         "image":"EverHex-Forest Lite/Forest/25.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":72,
+         "image":"EverHex-Forest Lite/Forest/21.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":73,
+         "image":"EverHex-Forest Lite/Forest/20.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":74,
+         "image":"EverHex-Forest Lite/Forest/18.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":75,
+         "image":"EverHex-Forest Lite/Forest/17.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":76,
+         "image":"EverHex-Forest Lite/Forest/14.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":77,
+         "image":"EverHex-Forest Lite/Forest/13.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":78,
+         "image":"EverHex-Forest Lite/Forest/12.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":79,
+         "image":"EverHex-Forest Lite/Forest/8.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":80,
+         "image":"EverHex-Forest Lite/Forest/7.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":81,
+         "image":"EverHex-Forest Lite/Forest/6.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":82,
+         "image":"EverHex-Forest Lite/Forest/5.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":83,
+         "image":"EverHex-Forest Lite/Forest/1.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":84,
+         "image":"EverHex-Forest Lite/Forest/2.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":85,
+         "image":"EverHex-Forest Lite/Water/lake/82.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":86,
+         "image":"EverHex-Forest Lite/Water/lake/80.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":87,
+         "image":"EverHex-Forest Lite/Water/lake/77.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":88,
+         "image":"EverHex-Forest Lite/Water/lake/76.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":89,
+         "image":"EverHex-Forest Lite/Water/lake/74.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":90,
+         "image":"EverHex-Forest Lite/Water/lake/72.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":91,
+         "image":"EverHex-Forest Lite/Water/lake/71.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":92,
+         "image":"EverHex-Forest Lite/Water/lake/70.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":93,
+         "image":"EverHex-Forest Lite/Water/lake/69.png",
+         "imageheight":128,
+         "imagewidth":128
+        }, 
+        {
+         "id":94,
+         "image":"EverHex-Forest Lite/Water/lake/67.png",
+         "imageheight":128,
+         "imagewidth":128
+        }],
+ "tilewidth":128,
+ "type":"tileset",
+ "version":"1.10"
+}
