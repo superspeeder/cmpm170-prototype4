@@ -1,3 +1,4 @@
+import { NONE } from "phaser";
 import {gameState, TURN_TRANSITION_TIME, WATER_COLOR} from "./GameManager";
 import { HexGrid } from "./HexGrid";
 import {Turn, TurnTarget} from "./Turn.ts";
@@ -184,8 +185,23 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
         for (let i = 0; i < gameState.territories.length; i++) {
             let territory = gameState.territories[i];
             if (territory[0] === birdGridY && territory[1] === birdGridX) {
-                gameState.expand(territory, i);
-                break;
+                if (this.isEnemy) {
+                    if (territory[4] > 0) {
+                        territory[4] -= 1;
+                        gameState.territories[i] = territory;
+                        break;
+                    }
+                    else {
+                        gameState.territories.splice(i, 1);
+                        gameState.setTile(territory[1], territory[0], NONE, gameState.territoryMap);
+                        break;
+                    }
+                }
+                else {
+                    gameState.expand(territory, i);
+                    break;
+                }
+                
             }
         }
         

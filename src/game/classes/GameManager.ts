@@ -24,7 +24,7 @@ export class GameState {
     territoryMap: Map<number, number>;
     birds: Bird[];
     idCounter: integer;
-    territories: [number, number, number, number[][]][]; // y, x, size, neighbors
+    territories: [number, number, number, number[][], number][]; // y, x, size, neighbors, spreadCooldown
     cameraCenterX: number;
     cameraCenterY: number;
     waterDisplay: WaterDisplay;
@@ -105,7 +105,7 @@ export class GameState {
             }
         }
 
-        this.territories = [[1, 7, 0, [[1, 7]]], [2, 14, 0, [[2, 14]]], [5, 7, 0, [[5, 7]]], [7, 2, 0, [[7, 2]]], [8, 13, 0, [[8, 13]]]];
+        this.territories = [[1, 7, 0, [[1, 7]], 1], [2, 14, 0, [[2, 14]], 1], [5, 7, 0, [[5, 7]], 1], [7, 2, 0, [[7, 2]], 1], [8, 13, 0, [[8, 13]], 1]];
         this.territoryMap = new Map(); 
         for (let t of this.territories) {
             this.territoryMap.set(makePosIndex(t[1], t[0]), TERRITORY_COLOR);
@@ -167,7 +167,7 @@ export class GameState {
             graphics.strokePath();
             
             if (color == TERRITORY_COLOR) {
-                graphics.fillStyle(color, 0.5);
+                graphics.fillStyle(color, 0.4);
                 graphics.fillPath();
             }
         })
@@ -216,37 +216,45 @@ export class GameState {
         }
     }
 
-    expand(territory: [number, number, number, number[][]], territoryIndex: number) {
+    expand(territory: [number, number, number, number[][], number], territoryIndex: number) {
         if (2 > territory[2]) {
             this.spreadTerritory(territory, territoryIndex);
             territory[3].forEach(([y, x]) => {
                 if (x >= 0 && x < 16 && y >= 0 && y < 16) {
                     if (this.getTile(x, y) == GRASS_COLOR || this.getTile(x, y) == WATER_COLOR) {
                         this.setTile(x, y, TERRITORY_COLOR, this.territoryMap);
-                        this.territories.push([y, x, 0, [[y, x]]]);
+                        if (!this.territories.some(t => t[0] === y && t[1] === x)) {
+                            this.territories.push([y, x, 0, [[y, x]], 1]);
+                        }
                     }
                 }
             });
         }
     }
 
-    spreadTerritory(territory: [number, number, number, number[][]], territoryIndex: number) {
+    spreadTerritory(territory: [number, number, number, number[][], number], territoryIndex: number) {
         let y = territory[0];
         let x = territory[1];
         let size = territory[2];
         let neighbors = territory[3];
-        if (size < 2) {
-            if (size < 1) {
-                this.addtileNeighbors(y, x, neighbors);
-            } else {
-                neighbors.forEach(([ny, nx]) => {
-                    this.addtileNeighbors(ny, nx, neighbors);
-                });
+        let spreadCooldown = territory[4];
+        if (spreadCooldown % 3 == 0) {
+            if (size < 2) {
+                if (size < 1) {
+                    this.addtileNeighbors(y, x, neighbors);
+                } else {
+                    neighbors.forEach(([ny, nx]) => {
+                        this.addtileNeighbors(ny, nx, neighbors);
+                    });
+                }
             }
+            size += 1;
+            neighbors = Array.from(new Set(neighbors));
+            spreadCooldown = 1;
+        } else {
+            spreadCooldown += 1;
         }
-        size += 1;
-        neighbors = Array.from(new Set(neighbors));
-        this.territories[territoryIndex] = [y, x, size, neighbors];
+        this.territories[territoryIndex] = [y, x, size, neighbors, spreadCooldown];
     }
 
     addtileNeighbors(y: number, x: number, neighbors: number[][]) {
