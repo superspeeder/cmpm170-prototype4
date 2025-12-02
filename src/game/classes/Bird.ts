@@ -71,15 +71,21 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
 
     snapToHexGrid(grid: HexGrid) {
         let [x, y] = grid.tileToWorld(grid.worldToTile([this.x, this.y]));
+
         this.scene.tweens.add({
             targets: this,
             x: x,
             y: y,
             duration: 100,
-            ease: "Quad.easeInOut"
-        })
-        this.updateHealthText();
-        gameState.updateBirdOccupancy(this); 
+            ease: "Quad.easeInOut",
+            onUpdate: () => {
+                this.updateHealthText();
+            },
+            onComplete: () => {
+                this.updateHealthText();
+                gameState.updateBirdOccupancy(this);
+            }
+        });
     }
 
     update(delta: number, _grid: HexGrid, gridColor: number, mouseClicked: boolean, camera: Phaser.Cameras.Scene2D.Camera) {
