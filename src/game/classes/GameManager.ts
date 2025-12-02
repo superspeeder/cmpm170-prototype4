@@ -13,7 +13,7 @@ function tileKey(tile: [number, number]): TileKey {
 export const GRASS_COLOR: integer = 0x007500;
 export const FOREST_COLOR: integer = 0x0b4700;
 export const WATER_COLOR: integer = 0x00528f;
-export const TERRITORY_COLOR: integer = 0xC217B3;
+export const TERRITORY_COLOR: integer = 0x750075;
 
 export class GameState {
     turnQueue: TurnQueue;
@@ -21,6 +21,7 @@ export class GameState {
     grid: HexGrid;
     gridColor: number[][];
     worldMap: Map<number, number>
+    territoryMap: Map<number, number>;
     birds: Bird[];
     idCounter: integer;
     territories: [number, number, number, number[][]][]; // y, x, size, neighbors
@@ -42,13 +43,13 @@ export class GameState {
             ],
             [
                 GRASS_COLOR, GRASS_COLOR, WATER_COLOR, FOREST_COLOR, FOREST_COLOR, FOREST_COLOR,
-                GRASS_COLOR, TERRITORY_COLOR, GRASS_COLOR, GRASS_COLOR, FOREST_COLOR, FOREST_COLOR,
+                GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, FOREST_COLOR, FOREST_COLOR,
                 WATER_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
             ],
             [
                 GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, FOREST_COLOR, FOREST_COLOR, FOREST_COLOR,
                 FOREST_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, FOREST_COLOR,
-                GRASS_COLOR, GRASS_COLOR, TERRITORY_COLOR, GRASS_COLOR,
+                GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
             ],
             [
                 GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, FOREST_COLOR, FOREST_COLOR, FOREST_COLOR,
@@ -62,7 +63,7 @@ export class GameState {
             ],
             [
                 GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, WATER_COLOR,
-                GRASS_COLOR, TERRITORY_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
+                GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
                 GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
             ],
             [
@@ -71,14 +72,14 @@ export class GameState {
                 GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
             ],
             [
-                GRASS_COLOR, GRASS_COLOR, TERRITORY_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
+                GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
                 GRASS_COLOR, GRASS_COLOR, FOREST_COLOR, FOREST_COLOR, FOREST_COLOR, GRASS_COLOR,
                 GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
             ],
             [
                 GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, FOREST_COLOR,
                 FOREST_COLOR, FOREST_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
-                GRASS_COLOR, TERRITORY_COLOR, GRASS_COLOR, GRASS_COLOR,
+                GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR,
             ],
             [
                 GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, GRASS_COLOR, FOREST_COLOR,
@@ -104,8 +105,13 @@ export class GameState {
             }
         }
 
-        this.birds = [];
         this.territories = [[1, 7, 0, [[1, 7]]], [2, 14, 0, [[2, 14]]], [5, 7, 0, [[5, 7]]], [7, 2, 0, [[7, 2]]], [8, 13, 0, [[8, 13]]]];
+        this.territoryMap = new Map(); 
+        for (let t of this.territories) {
+            this.territoryMap.set(makePosIndex(t[1], t[0]), TERRITORY_COLOR);
+        }
+
+        this.birds = [];
         this.cameraCenterX = 0;
         this.cameraCenterY = 0;
     }
@@ -144,6 +150,26 @@ export class GameState {
 
             graphics.fillStyle(color, 1);
             graphics.fillPath();
+        })
+
+        this.territoryMap.forEach((color, p) => {
+            let [x, y] = parsePosIndex(p);
+            let [px, py] = this.grid.tileCenter([x, y]);
+
+            graphics.beginPath();
+            for (let i = 0; i < 6; i++) {
+                graphics.lineTo(
+                    px + r * Math.sin((i * Math.PI) / 3),
+                    py + r * Math.cos((i * Math.PI) / 3)
+                );
+            }
+            graphics.closePath();
+            graphics.strokePath();
+            
+            if (color == TERRITORY_COLOR) {
+                graphics.fillStyle(color, 0.5);
+                graphics.fillPath();
+            }
         })
         // for (let x = 0; x < 16; x++) {
         //     for (let y = 0; y < 12; y++) {
@@ -199,10 +225,10 @@ export class GameState {
         if (2 > territory[2]) {
             this.spreadTerritory(territory, territoryIndex);
             territory[3].forEach(([y, x]) => {
-                if (x >= 0 && x < 16 && y >= 0 && y < 12) {
-                    if (this.getTile(x, y) == GRASS_COLOR) {
-                        this.setTile(x, y, TERRITORY_COLOR);
-                        this.territories.push([y, x, 0, territory[3]]);
+                if (x >= 0 && x < 16 && y >= 0 && y < 16) {
+                    if (this.getTile(x, y) == GRASS_COLOR || this.getTile(x, y) == WATER_COLOR) {
+                        this.setTile(x, y, TERRITORY_COLOR, this.territoryMap);
+                        this.territories.push([y, x, 0, [[y, x]]]);
                     }
                 }
             });
@@ -242,8 +268,8 @@ export class GameState {
         return tile;
     }
 
-    setTile(x: number, y: number, tile: number): void {
-        this.worldMap.set(makePosIndex(x, y), tile);
+    setTile(x: number, y: number, tile: number, map: Map<number, number>): void {
+        map.set(makePosIndex(x, y), tile);
     }
 
     registerBird(bird: Bird) {
