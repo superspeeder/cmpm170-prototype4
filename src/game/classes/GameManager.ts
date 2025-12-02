@@ -4,6 +4,12 @@ import {HexGrid} from "./HexGrid";
 import {Turn, TurnQueue} from "./Turn";
 import {WaterDisplay} from "./WaterDisplay.ts";
 
+type TileKey = string;
+function tileKey(tile: [number, number]): TileKey {
+  return `${tile[0]},${tile[1]}`;
+}
+
+
 export const GRASS_COLOR: integer = 0x007500;
 export const FOREST_COLOR: integer = 0x0b4700;
 export const WATER_COLOR: integer = 0x00528f;
@@ -21,6 +27,8 @@ export class GameState {
     cameraCenterX: number;
     cameraCenterY: number;
     waterDisplay: WaterDisplay;
+    occupancy: Map<TileKey, Bird> = new Map();
+
 
     constructor() {
         this.idCounter = 1;
@@ -232,6 +240,40 @@ export class GameState {
 
     setTile(x: number, y: number, tile: number): void {
         this.worldMap.set([x, y], tile);
+    }
+
+    registerBird(bird: Bird) {
+        this.birds.push(bird);
+        this.updateBirdOccupancy(bird);
+        this.turnQueue.addTarget(bird);
+    }
+
+    updateBirdOccupancy(bird: Bird) {
+        const tile = this.grid.worldToTile([bird.x, bird.y]);
+        this.occupancy.set(tileKey(tile), bird);
+    }
+
+    clearBirdOccupancy(bird: Bird) {
+        const tile = this.grid.worldToTile([bird.x, bird.y]);
+        const key = tileKey(tile);
+        if (this.occupancy.get(key) === bird) {
+            this.occupancy.delete(key);
+        }
+    }
+
+    removeBird(bird: Bird) {
+        this.clearBirdOccupancy(bird);
+        this.turnQueue.removeTarget(bird);
+        this.birds = this.birds.filter(b => b !== bird);
+    }
+
+
+    getBirdAtTile(tile: [number, number]): Bird | undefined {
+        return this.occupancy.get(tileKey(tile));
+    }
+
+    getEnemyBirds(isEnemy: boolean): Bird[] {
+        return this.birds.filter(b => b.isEnemy !== isEnemy);
     }
 }
 

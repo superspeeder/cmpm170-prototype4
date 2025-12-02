@@ -96,5 +96,6 @@ export class Enemy extends Bird {
             this.activeBird = false;
             gameState.turnQueue.nextTurn(this.scene);
         }
+        this.updateHealthText();
     }
 }

@@ -130,6 +130,14 @@ export class TurnQueue {
         return !this.inTransition;
     }
 
+    addTarget(target: TurnTarget) {
+        this.turns.push(new Turn(target, false));
+    }
+
+    removeTarget(target: TurnTarget) {
+        this.turns = this.turns.filter(turn => turn.target !== target);
+    }
+
     addTurnToQueue(turn: Turn) {
         this.turns.push(turn)
     }
@@ -156,4 +164,6 @@ export class TurnQueue {
             }
         }
     }
+
+    
 }

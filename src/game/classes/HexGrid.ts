@@ -71,4 +71,18 @@ export class HexGrid {
         let r  = 2.0 / 3.0 * y_
         return this.axialRound([q, r])
     }
+
+    hexDistance(a: [number, number], b: [number, number]): number {
+        const [q1, r1] = a;
+        const [q2, r2] = b;
+
+        const s1 = -q1 - r1;
+        const s2 = -q2 - r2;
+
+        const dq = q1 - q2;
+        const dr = r1 - r2;
+        const ds = s1 - s2;
+
+        return (Math.abs(dq) + Math.abs(dr) + Math.abs(ds)) / 2;
+    }
 }
