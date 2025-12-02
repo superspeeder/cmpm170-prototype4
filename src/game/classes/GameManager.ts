@@ -105,7 +105,7 @@ export class GameState {
         }
 
         this.birds = [];
-        this.territories = [[1, 7, 0, [[1, 7]]], [2, 14, 0, [[2, 14]]], [5, 7, 0, [[5, 7]]], [7, 2, 0, [[7, 2]]], [9, 13, 0, [[9, 13]]]];
+        this.territories = [[1, 7, 0, [[1, 7]]], [2, 14, 0, [[2, 14]]], [5, 7, 0, [[5, 7]]], [7, 2, 0, [[7, 2]]], [8, 13, 0, [[8, 13]]]];
         this.cameraCenterX = 0;
         this.cameraCenterY = 0;
     }
@@ -198,18 +198,18 @@ export class GameState {
                 if (x >= 0 && x < 16 && y >= 0 && y < 12) {
                     if (this.getTile(x, y) == GRASS_COLOR) {
                         this.setTile(x, y, TERRITORY_COLOR);
+                        this.territories.push([y, x, 0, territory[3]]);
                     }
-
                 }
             });
         }
     }
 
     spreadTerritory(territory: [number, number, number, number[][]], territoryIndex: number) {
-        let neighbors = territory[3];
-        let x = territory[1];
         let y = territory[0];
+        let x = territory[1];
         let size = territory[2];
+        let neighbors = territory[3];
         if (size < 2) {
             if (size < 1) {
                 this.addtileNeighbors(y, x, neighbors);
