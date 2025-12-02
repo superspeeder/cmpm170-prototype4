@@ -48,18 +48,18 @@ export class MainMenu extends Scene {
             },
         });
 
-        let bird = new Bird(this, [800, 800], "placeholder");
-        bird.scale = 2
+        let bird = new Bird(this, [890, 770], "hummingbird");
+        bird.setScale(0.2);
         this.add.existing(bird);
         gameState.addBird(bird, true);
 
-        let bird2 = new Bird(this, [800, 800], "placeholder");
-        bird2.scale = 2
+        let bird2 = new Bird(this, [680, 770], "hummingbird");
+        bird2.setScale(0.2);
         this.add.existing(bird2);
         gameState.addBird(bird2, true);
 
-        let enemy = new Enemy(this, [1600, 500], "placeholder");
-        enemy.scale = 2
+        let enemy = new Enemy(this, [1600, 500], "hummingbird");
+        enemy.setScale(0.2);
         this.add.existing(enemy);
         gameState.addBird(enemy, false);
 
