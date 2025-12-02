@@ -177,12 +177,12 @@ export class GameState {
     }
 
     updateBirds(delta: number, clicked: boolean, camera: Phaser.Cameras.Scene2D.Camera) {
-        console.log("Hello!")
+        //console.log("Hello!")
         this.birds.forEach((bird) => {
             let [birdGridX, birdGridY] = this.grid.worldToTile([bird.x, bird.y])
             let color = this.getTile(birdGridX, birdGridY)
             bird.update(delta, this.grid, color, clicked, camera);
-            console.log(color)
+            //console.log(color)
         })
     }
 
@@ -207,13 +207,8 @@ export class GameState {
     }
 
     onBirdKill(bird: Bird) {
-        for (var i = 0; i < this.birds.length; i++) {
-            if (this.birds[i].id == bird.id) {
-                this.birds.splice(i, 1)
-                break;
-            }
-        }
-
+        this.clearBirdOccupancy(bird);
+        this.birds = this.birds.filter(b => b.id !== bird.id);
         this.turnQueue.removeTurn(bird)
 
         if (this.birds.length == 0) {
@@ -292,9 +287,7 @@ export class GameState {
     }
 
     removeBird(bird: Bird) {
-        this.clearBirdOccupancy(bird);
-        this.turnQueue.removeTarget(bird);
-        this.birds = this.birds.filter(b => b !== bird);
+        this.onBirdKill(bird);
     }
 
 

@@ -85,12 +85,24 @@ export class TurnQueue {
             this.inTransition = false;
             return;
         }
+        if (this.currentTurn >= this.turns.length) {
+            this.currentTurn = 0;
+        }
+        if (this.currentTurn < 0) {
+            this.currentTurn = 0;
+        }
 
         let nextTurn = this.turns[(this.currentTurn + 1) % this.turns.length];
         this.getCurrentTurn().endTurn()
 
+        if (this.turns.length === 0) {
+            this.inTransition = false;
+            return;
+        }
 
         let tweens = this.turnAnimationTargets.map(target => target.turnAnimation(scene, this.turns[this.currentTurn], nextTurn));
+        console.log(this.turns);
+        console.log(this.currentTurn);
         let turnTween = this.turns[this.currentTurn].target.turnAnimation(scene, nextTurn);
         if (turnTween !== undefined) {
             tweens.push(turnTween);
@@ -152,13 +164,14 @@ export class TurnQueue {
                 console.log("remove turn", i, this.turns)
                 this.turns.splice(i, 1)
 
-                if (this.currentTurn == i) {
-                    if (!this.inTransition)
-                        this.getCurrentTurn().startTurn()
-                }
-
-                if (this.currentTurn >= i) {
+                if (this.currentTurn > i) {
                     this.currentTurn -= 1; // shift down 1 index
+                }
+                if (this.currentTurn < 0) {
+                    this.currentTurn = 0;
+                }
+                if (this.currentTurn >= this.turns.length) {
+                    this.currentTurn = 0;
                 }
                 break;
             }

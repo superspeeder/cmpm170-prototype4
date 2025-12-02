@@ -281,6 +281,7 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
         });
 
         gameState.removeBird(this);
+        gameState.onBirdKill(this);
     }
 
     createHealthText(scene: Phaser.Scene) {
