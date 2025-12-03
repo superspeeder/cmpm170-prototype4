@@ -209,7 +209,7 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
         }
         
         if (this.overGridColor == WATER_COLOR) {
-            this.water += 5;
+            this.water += 4;
             this.water = Math.min(24, this.water);
         } else {
             this.water -= 1;
