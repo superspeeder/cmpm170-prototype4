@@ -219,7 +219,7 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
         gameState.waterDisplay.targetWater = this.water;
         this.trail = []
 
-        if (this.water <= 0) {
+        if (this.water <= 0 && !this.isEnemy) {
             this.kill();
         }
         this.updateHealthText();
