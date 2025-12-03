@@ -53,12 +53,12 @@ export class MainMenu extends Scene {
         this.add.existing(bird);
         gameState.addBird(bird, true);
 
-        let bird2 = new Bird(this, [680, 770], "hummingbird");
+        let bird2 = new Bird(this, [670, 770], "hummingbird");
         bird2.setScale(0.2);
         this.add.existing(bird2);
         gameState.addBird(bird2, true);
 
-        let bird3 = new Bird(this, [460, 770], "hummingbird");
+        let bird3 = new Bird(this, [450, 770], "hummingbird");
         bird3.setScale(0.2);
         this.add.existing(bird3);
         gameState.addBird(bird3, true);
