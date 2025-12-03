@@ -15,6 +15,7 @@ export class MainMenu extends Scene {
     waterDisplay: WaterDisplay;
     bird: Bird;
     bird2: Bird;
+    bird3: Bird;
     enemy: Enemy;
 
     nameText: Phaser.GameObjects.Text;
@@ -53,21 +54,21 @@ export class MainMenu extends Scene {
             },
         });
 
-        let bird = new Bird(this, [890, 770], "hummingbird", "Jim");
-        bird.setScale(0.2);
-        this.add.existing(bird);
+        this.bird = new Bird(this, [890, 770], "hummingbird", "Jim");
+        this.bird.setScale(0.2);
+        this.add.existing(this.bird);
 
-        let bird2 = new Bird(this, [670, 770], "hummingbird", "Frank");
-        bird2.setScale(0.2);
-        this.add.existing(bird2);
+        this.bird2 = new Bird(this, [670, 770], "hummingbird", "Frank");
+        this.bird2.setScale(0.2);
+        this.add.existing(this.bird2);
 
-        let bird3 = new Bird(this, [450, 770], "hummingbird", "Bill");
-        bird3.setScale(0.2);
-        this.add.existing(bird3);
+        this.bird3 = new Bird(this, [450, 770], "hummingbird", "Bill");
+        this.bird3.setScale(0.2);
+        this.add.existing(this.bird3);
 
-        let enemy = new Enemy(this, [1600, 500], "hummingbird", "Tim");
-        enemy.setScale(0.2);
-        this.add.existing(enemy);
+        this.enemy = new Enemy(this, [1600, 500], "hummingbird", "Tim");
+        this.enemy.setScale(0.2);
+        this.add.existing(this.enemy);
 
         this.endTurnButton = this.add.sprite(1700, 1400, "end-turn");
         this.endTurnButton.setScrollFactor(0)
@@ -128,6 +129,7 @@ export class MainMenu extends Scene {
             gameState.scene = this;
             gameState.addBird(this.bird, true);
             gameState.addBird(this.bird2, true);
+            gameState.addBird(this.bird3, true);
             gameState.addBird(this.enemy, false);
             gameState.waterDisplay = this.waterDisplay;
             gameState.turnQueue.addTurnAnimationTarget(this.waterDisplay);
