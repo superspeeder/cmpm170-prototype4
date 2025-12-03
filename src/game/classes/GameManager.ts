@@ -234,6 +234,7 @@ export class GameState {
         if (bird.isEnemy === true) {
             this.birdRespawnTimer = this.turnQueue.rounds + 3;
             this.isEnemyRespawning = true;
+            
             this.enemyKillSound?.play();
             this.amusingKillImage?.setAlpha(1);
             this.scene!!.tweens.add({
@@ -243,7 +244,7 @@ export class GameState {
                 ease: 'Quad.easeOut',
             });
         }
-        
+
         if (this.birds.length == 0) {
             this.scene!!.scene.start("GameOver")
         }
