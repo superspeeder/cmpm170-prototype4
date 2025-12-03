@@ -232,9 +232,9 @@ export class GameState {
         this.turnQueue.removeTurn(bird);
 
         if (bird.isEnemy === true) {
-            this.birdRespawnTimer = this.turnQueue.rounds + 3;
+            this.birdRespawnTimer = this.turnQueue.rounds + 2;
             this.isEnemyRespawning = true;
-            
+
             this.enemyKillSound?.play();
             this.amusingKillImage?.setAlpha(1);
             this.scene!!.tweens.add({
@@ -254,7 +254,7 @@ export class GameState {
         if (2 > territory[2]) {
             this.spreadTerritory(territory, territoryIndex);
             territory[3].forEach(([y, x]) => {
-                if (x >= 0 && x < 16 && y >= 0 && y < 16) {
+                if (x >= 0 && x < 16 && y >= 0 && y < 12) {
                     if (this.getTile(x, y) == GRASS_COLOR || this.getTile(x, y) == WATER_COLOR) {
                         this.setTile(x, y, TERRITORY_COLOR, this.territoryMap);
                         if (!this.territories.some(t => t[0] === y && t[1] === x)) {
