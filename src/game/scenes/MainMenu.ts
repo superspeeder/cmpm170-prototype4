@@ -2,7 +2,7 @@ import { Scene } from "phaser";
 import { Bird } from "../classes/Bird";
 import { gameState as gameState } from "../classes/GameManager";
 import { Enemy } from "../classes/Enemy";
-import {WaterDisplay} from "../classes/WaterDisplay.ts";
+import { WaterDisplay } from "../classes/WaterDisplay.ts";
 
 export class MainMenu extends Scene {
     graphics: Phaser.GameObjects.Graphics;
@@ -13,6 +13,8 @@ export class MainMenu extends Scene {
     lastClicked: boolean
     uiClick?: string | null
     waterDisplay: WaterDisplay;
+
+    nameText: Phaser.GameObjects.Text;
 
     constructor() {
         super("MainMenu");
@@ -48,22 +50,22 @@ export class MainMenu extends Scene {
             },
         });
 
-        let bird = new Bird(this, [890, 770], "hummingbird");
+        let bird = new Bird(this, [890, 770], "hummingbird", "Jim");
         bird.setScale(0.2);
         this.add.existing(bird);
         gameState.addBird(bird, true);
 
-        let bird2 = new Bird(this, [670, 770], "hummingbird");
+        let bird2 = new Bird(this, [670, 770], "hummingbird", "Frank");
         bird2.setScale(0.2);
         this.add.existing(bird2);
         gameState.addBird(bird2, true);
 
-        let bird3 = new Bird(this, [450, 770], "hummingbird");
+        let bird3 = new Bird(this, [450, 770], "hummingbird", "Bill");
         bird3.setScale(0.2);
         this.add.existing(bird3);
         gameState.addBird(bird3, true);
 
-        let enemy = new Enemy(this, [1600, 500], "hummingbird");
+        let enemy = new Enemy(this, [1600, 500], "hummingbird", "Tim");
         enemy.setScale(0.2);
         this.add.existing(enemy);
         gameState.addBird(enemy, false);
@@ -94,7 +96,16 @@ export class MainMenu extends Scene {
         //     strokeThickness: 4,
         //     fontSize: 26,
         // });
-        // this.text2.setScrollFactor(0)
+        // this.text2.setScrollFactor(0) 
+
+        this.nameText = this.add.text(1600, 40, "Bird", {
+            color: "white",
+            stroke: "black",
+            strokeThickness: 16,
+            fontSize: 72,
+        });
+        this.nameText.setScrollFactor(0);
+
 
         this.waterDisplay = new WaterDisplay(this, 80, 272, 25, 50);
         this.waterDisplay.scale = 2;
@@ -106,7 +117,10 @@ export class MainMenu extends Scene {
 
         gameState.turnQueue.addTurnAnimationTarget(this.waterDisplay);
         gameState.turnQueue.startGame();
-
+        gameState.enemyMaker = (scene: Phaser.Scene,
+            [x, y]: [number, number],
+            texture: string | Phaser.Textures.Texture,
+            name: string,) => { return new Enemy(scene, [x, y], texture, name); };
     }
 
     update(_time: number, delta: number) {
@@ -142,6 +156,12 @@ export class MainMenu extends Scene {
         this.waterDisplay.update();
         gameState.updateCamera();
 
+        let turn = gameState.turnQueue.getCurrentTurn();
+        if (turn !== undefined) {
+            if (turn.target.name) {
+                this.nameText.setText(turn.target.name);
+            }
+        }
         // this.updateText()
     }
 

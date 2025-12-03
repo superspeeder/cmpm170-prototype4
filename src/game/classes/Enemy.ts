@@ -8,9 +8,10 @@ export class Enemy extends Bird {
     constructor(
         scene: Phaser.Scene,
         [x, y]: [number, number],
-        texture: string | Phaser.Textures.Texture = "placeholder"
+        texture: string | Phaser.Textures.Texture,
+        name: string,
     ){
-        super(scene, [x,y], texture);
+        super(scene, [x,y], texture, name);
 
         this.isEnemy = true;
         this.setTint(0xff5555);
