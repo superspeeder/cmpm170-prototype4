@@ -68,6 +68,16 @@ export class MainMenu extends Scene {
         this.add.existing(enemy);
         gameState.addBird(enemy, false);
 
+        let enemyKillSound = this.sound.add('amusing-kill-sound');
+        enemyKillSound.setVolume(0.5);
+        gameState.enemyKillSound = enemyKillSound;
+
+        let killImage = this.add.sprite(900, 800, 'amusing-hummingbird');
+        killImage.setScrollFactor(0);
+        killImage.setScale(0.8);
+        killImage.setAlpha(0);
+        gameState.amusingKillImage = killImage;
+
         this.endTurnButton = this.add.sprite(1700, 1400, "end-turn");
         this.endTurnButton.setScrollFactor(0)
 

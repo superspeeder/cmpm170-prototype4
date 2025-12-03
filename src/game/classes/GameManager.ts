@@ -23,6 +23,8 @@ export class GameState {
     worldMap: Map<number, number>
     territoryMap: Map<number, number>;
     birds: Bird[];
+    enemyKillSound?: Phaser.Sound.BaseSound;
+    amusingKillImage?: Phaser.GameObjects.Sprite;
     idCounter: integer;
     territories: [number, number, number, number[][], number][]; // y, x, size, neighbors, spreadCooldown
     cameraCenterX: number;
@@ -210,7 +212,16 @@ export class GameState {
         this.clearBirdOccupancy(bird);
         this.birds = this.birds.filter(b => b.id !== bird.id);
         this.turnQueue.removeTurn(bird)
-
+        if (bird.isEnemy) {
+            this.enemyKillSound?.play();
+            this.amusingKillImage?.setAlpha(1);
+            this.scene!!.tweens.add({
+                targets: this.amusingKillImage,
+                alpha: 0,
+                duration: 3000,
+                ease: 'Quad.easeOut',
+            });
+        }
         if (this.birds.length == 0) {
             this.scene!!.scene.start("GameOver")
         }
