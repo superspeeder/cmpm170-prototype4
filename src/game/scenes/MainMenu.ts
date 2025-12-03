@@ -13,6 +13,9 @@ export class MainMenu extends Scene {
     lastClicked: boolean
     uiClick?: string | null
     waterDisplay: WaterDisplay;
+    bird: Bird;
+    bird2: Bird;
+    enemy: Enemy;
 
     constructor() {
         super("MainMenu");
@@ -48,20 +51,17 @@ export class MainMenu extends Scene {
             },
         });
 
-        let bird = new Bird(this, [890, 770], "hummingbird");
-        bird.setScale(0.2);
-        this.add.existing(bird);
-        gameState.addBird(bird, true);
+        this.bird = new Bird(this, [890, 770], "hummingbird");
+        this.bird.setScale(0.2);
+        this.add.existing(this.bird);
 
-        let bird2 = new Bird(this, [680, 770], "hummingbird");
-        bird2.setScale(0.2);
-        this.add.existing(bird2);
-        gameState.addBird(bird2, true);
+        this.bird2 = new Bird(this, [680, 770], "hummingbird");
+        this.bird2.setScale(0.2);
+        this.add.existing(this.bird2);
 
-        let enemy = new Enemy(this, [1600, 500], "hummingbird");
-        enemy.setScale(0.2);
-        this.add.existing(enemy);
-        gameState.addBird(enemy, false);
+        this.enemy = new Enemy(this, [1600, 500], "hummingbird");
+        this.enemy.setScale(0.2);
+        this.add.existing(this.enemy);
 
         this.endTurnButton = this.add.sprite(1700, 1400, "end-turn");
         this.endTurnButton.setScrollFactor(0)
@@ -95,16 +95,31 @@ export class MainMenu extends Scene {
         this.waterDisplay.scale = 2;
         this.add.existing(this.waterDisplay);
         this.waterDisplay.setScrollFactor(0);
-        gameState.waterDisplay = this.waterDisplay;
 
         this.input.enable(this.endTurnButton)
 
-        gameState.turnQueue.addTurnAnimationTarget(this.waterDisplay);
-        gameState.turnQueue.startGame();
+        // gameState.turnQueue.startGame();
 
+        this.started = false;
     }
 
+    started: boolean;
+
     update(_time: number, delta: number) {
+        if (!this.started) {
+            this.started = true;
+            
+            console.log(this);
+            gameState.scene = this;
+            gameState.addBird(this.bird, true);
+            gameState.addBird(this.bird2, true);
+            gameState.addBird(this.enemy, false);
+            gameState.waterDisplay = this.waterDisplay;
+            gameState.turnQueue.addTurnAnimationTarget(this.waterDisplay);
+
+            gameState.turnQueue.startGame();
+        
+        }
         gameState.drawGrid(this.graphics);
 
         let mousePointer = this.input.mousePointer;
