@@ -238,7 +238,7 @@ export class GameState {
         let size = territory[2];
         let neighbors = territory[3];
         let spreadCooldown = territory[4];
-        if (spreadCooldown % 3 == 0) {
+        //if (spreadCooldown % 3 == 0) {
             if (size < 2) {
                 if (size < 1) {
                     this.addtileNeighbors(y, x, neighbors);
@@ -251,9 +251,9 @@ export class GameState {
             size += 1;
             neighbors = Array.from(new Set(neighbors));
             spreadCooldown = 1;
-        } else {
-            spreadCooldown += 1;
-        }
+        //} else {
+            //spreadCooldown += 1;
+        //}
         this.territories[territoryIndex] = [y, x, size, neighbors, spreadCooldown];
     }
 

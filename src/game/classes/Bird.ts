@@ -189,16 +189,16 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
             let territory = gameState.territories[i];
             if (territory[0] === birdGridY && territory[1] === birdGridX) {
                 if (this.isEnemy) {
-                    if (territory[4] > 0) {
+                    /*if (territory[4] > 0) {
                         territory[4] -= 1;
                         gameState.territories[i] = territory;
                         break;
                     }
-                    else {
+                    else {*/
                         gameState.territories.splice(i, 1);
                         gameState.setTile(territory[1], territory[0], NONE, gameState.territoryMap);
                         break;
-                    }
+                    //}
                 }
                 else {
                     gameState.expand(territory, i);
@@ -209,7 +209,7 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
         }
         
         if (this.overGridColor == WATER_COLOR) {
-            this.water += 2;
+            this.water += 5;
             this.water = Math.min(24, this.water);
         } else {
             this.water -= 1;
