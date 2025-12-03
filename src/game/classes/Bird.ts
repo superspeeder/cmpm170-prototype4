@@ -40,6 +40,7 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
     isEnemy: boolean;
     previousTurnWater: number;
     graphics: Phaser.GameObjects.Graphics;
+    name: string;
 
     maxHealth: number;
     health: number;
@@ -51,7 +52,8 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
     constructor(
         scene: Phaser.Scene,
         [x, y]: [number, number],
-        texture: string | Phaser.Textures.Texture
+        texture: string | Phaser.Textures.Texture,
+        name: string,
     ) {
         super(scene, x, y, texture);
         this.keys = this.scene.input.keyboard!!.createCursorKeys();
@@ -67,7 +69,7 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
         this.hasAttackedThisTurn = false;
         this.createHealthText(scene);
         this.graphics = scene.add.graphics();
-        
+        this.name = name;
     }
 
     snapToHexGrid(grid: HexGrid) {
