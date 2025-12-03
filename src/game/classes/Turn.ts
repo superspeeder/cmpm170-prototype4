@@ -46,6 +46,7 @@ export interface TurnAnimationTarget {
 export class TurnQueue {
     turns: Turn[]
     currentTurn: integer
+    rounds: integer
 
     turnAnimationTargets: TurnAnimationTarget[]
 
@@ -56,6 +57,7 @@ export class TurnQueue {
         this.currentTurn = 0
         this.inTransition = false;
         this.turnAnimationTargets = []
+        this.rounds = 0;
     }
 
     addTurnAnimationTarget(target: TurnAnimationTarget) {
@@ -92,6 +94,10 @@ export class TurnQueue {
         }
         if (this.currentTurn < 0) {
             this.currentTurn = 0;
+        }
+
+        if (this.currentTurn == 0) {
+            this.rounds += 1;
         }
 
         let nextTurn = this.turns[(this.currentTurn + 1) % this.turns.length];

@@ -1,12 +1,12 @@
-import {MainMenu} from "../scenes/MainMenu";
-import {Bird} from "./Bird";
-import {HexGrid} from "./HexGrid";
-import {Turn, TurnQueue} from "./Turn";
-import {WaterDisplay} from "./WaterDisplay.ts";
+import { MainMenu } from "../scenes/MainMenu";
+import { Bird } from "./Bird";
+import { HexGrid } from "./HexGrid";
+import { Turn, TurnQueue } from "./Turn";
+import { WaterDisplay } from "./WaterDisplay.ts";
 
 type TileKey = string;
 function tileKey(tile: [number, number]): TileKey {
-  return `${tile[0]},${tile[1]}`;
+    return `${tile[0]},${tile[1]}`;
 }
 
 
@@ -29,6 +29,10 @@ export class GameState {
     cameraCenterY: number;
     waterDisplay: WaterDisplay;
     occupancy: Map<TileKey, Bird> = new Map();
+    enemyMaker: (scene: Phaser.Scene,
+        [x, y]: [number, number],
+        texture: string | Phaser.Textures.Texture,
+        name: string,) => Bird;
 
 
     constructor() {
@@ -98,15 +102,18 @@ export class GameState {
             ],
         ];
 
+        this.birdRespawnTimer = 0;
+        this.isEnemyRespawning = false;
+
         this.worldMap = new Map();
-        for (let j = 0 ; j < this.gridColor.length; j++) {
-            for (let i = 0 ; i < this.gridColor[j].length; i++) {
+        for (let j = 0; j < this.gridColor.length; j++) {
+            for (let i = 0; i < this.gridColor[j].length; i++) {
                 this.worldMap.set((i << 16) | j, this.gridColor[j][i]);
             }
         }
 
         this.territories = [[1, 7, 0, [[1, 7]], 1], [2, 14, 0, [[2, 14]], 1], [5, 7, 0, [[5, 7]], 1], [7, 2, 0, [[7, 2]], 1], [8, 13, 0, [[8, 13]], 1]];
-        this.territoryMap = new Map(); 
+        this.territoryMap = new Map();
         for (let t of this.territories) {
             this.territoryMap.set(makePosIndex(t[1], t[0]), TERRITORY_COLOR);
         }
@@ -165,7 +172,7 @@ export class GameState {
             }
             graphics.closePath();
             graphics.strokePath();
-            
+
             if (color == TERRITORY_COLOR) {
                 graphics.fillStyle(color, 0.4);
                 graphics.fillPath();
@@ -184,6 +191,14 @@ export class GameState {
             bird.update(delta, this.grid, color, clicked, camera);
             //console.log(color)
         })
+
+        if (this.isEnemyRespawning && this.turnQueue.rounds > this.birdRespawnTimer) {
+            let enemy = this.enemyMaker(this.scene!!, [Math.floor(Math.random() * 2000), Math.floor(Math.random() * 1200)], "hummingbird", "Tim");
+            enemy.setScale(0.2);
+            this.scene!!.add.existing(enemy);
+            this.addBird(enemy, false);
+            this.isEnemyRespawning = false;
+        }
     }
 
     drawTrail(graphics: Phaser.GameObjects.Graphics) {
@@ -206,10 +221,18 @@ export class GameState {
         graphics.update();
     }
 
+    birdRespawnTimer: number;
+    isEnemyRespawning: boolean;
+
     onBirdKill(bird: Bird) {
         this.clearBirdOccupancy(bird);
         this.birds = this.birds.filter(b => b.id !== bird.id);
-        this.turnQueue.removeTurn(bird)
+        this.turnQueue.removeTurn(bird);
+
+        if (bird.isEnemy === true) {
+            this.birdRespawnTimer = this.turnQueue.rounds + 3;
+            this.isEnemyRespawning = true;
+        }
 
         if (this.birds.length == 0) {
             this.scene!!.scene.start("GameOver")
@@ -238,7 +261,7 @@ export class GameState {
         let size = territory[2];
         let neighbors = territory[3];
         let spreadCooldown = territory[4];
-        if (spreadCooldown % 3 == 0) {
+        //if (spreadCooldown % 3 == 0) {
             if (size < 2) {
                 if (size < 1) {
                     this.addtileNeighbors(y, x, neighbors);
@@ -251,9 +274,9 @@ export class GameState {
             size += 1;
             neighbors = Array.from(new Set(neighbors));
             spreadCooldown = 1;
-        } else {
-            spreadCooldown += 1;
-        }
+        //} else {
+            //spreadCooldown += 1;
+        //}
         this.territories[territoryIndex] = [y, x, size, neighbors, spreadCooldown];
     }
 

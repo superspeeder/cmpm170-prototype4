@@ -40,6 +40,7 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
     isEnemy: boolean;
     previousTurnWater: number;
     graphics: Phaser.GameObjects.Graphics;
+    name: string;
 
     maxHealth: number;
     health: number;
@@ -51,7 +52,8 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
     constructor(
         scene: Phaser.Scene,
         [x, y]: [number, number],
-        texture: string | Phaser.Textures.Texture
+        texture: string | Phaser.Textures.Texture,
+        name: string,
     ) {
         super(scene, x, y, texture);
         this.keys = this.scene.input.keyboard!!.createCursorKeys();
@@ -67,7 +69,7 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
         this.hasAttackedThisTurn = false;
         this.createHealthText(scene);
         this.graphics = scene.add.graphics();
-        
+        this.name = name;
     }
 
     snapToHexGrid(grid: HexGrid) {
@@ -189,16 +191,16 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
             let territory = gameState.territories[i];
             if (territory[0] === birdGridY && territory[1] === birdGridX) {
                 if (this.isEnemy) {
-                    if (territory[4] > 0) {
+                    /*if (territory[4] > 0) {
                         territory[4] -= 1;
                         gameState.territories[i] = territory;
                         break;
                     }
-                    else {
+                    else {*/
                         gameState.territories.splice(i, 1);
                         gameState.setTile(territory[1], territory[0], NONE, gameState.territoryMap);
                         break;
-                    }
+                    //}
                 }
                 else {
                     gameState.expand(territory, i);
@@ -209,7 +211,7 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
         }
         
         if (this.overGridColor == WATER_COLOR) {
-            this.water += 2;
+            this.water += 4;
             this.water = Math.min(24, this.water);
         } else {
             this.water -= 1;
@@ -219,7 +221,7 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
         gameState.waterDisplay.targetWater = this.water;
         this.trail = []
 
-        if (this.water <= 0) {
+        if (this.water <= 0 && !this.isEnemy) {
             this.kill();
         }
         this.updateHealthText();
