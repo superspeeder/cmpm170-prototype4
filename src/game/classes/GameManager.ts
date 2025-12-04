@@ -23,6 +23,8 @@ export class GameState {
     worldMap: Map<number, number>
     territoryMap: Map<number, number>;
     birds: Bird[];
+    enemyKillSound?: Phaser.Sound.BaseSound;
+    amusingKillImage?: Phaser.GameObjects.Sprite;
     idCounter: integer;
     territories: [number, number, number, number[][], number][]; // y, x, size, neighbors, spreadCooldown
     cameraCenterX: number;
@@ -230,8 +232,17 @@ export class GameState {
         this.turnQueue.removeTurn(bird);
 
         if (bird.isEnemy === true) {
-            this.birdRespawnTimer = this.turnQueue.rounds + 3;
+            this.birdRespawnTimer = this.turnQueue.rounds + 2;
             this.isEnemyRespawning = true;
+
+            this.enemyKillSound?.play();
+            this.amusingKillImage?.setAlpha(1);
+            this.scene!!.tweens.add({
+                targets: this.amusingKillImage,
+                alpha: 0,
+                duration: 3000,
+                ease: 'Quad.easeOut',
+            });
         }
 
         if (this.birds.length == 0) {
@@ -243,7 +254,7 @@ export class GameState {
         if (2 > territory[2]) {
             this.spreadTerritory(territory, territoryIndex);
             territory[3].forEach(([y, x]) => {
-                if (x >= 0 && x < 16 && y >= 0 && y < 16) {
+                if (x >= 0 && x < 16 && y >= 0 && y < 12) {
                     if (this.getTile(x, y) == GRASS_COLOR || this.getTile(x, y) == WATER_COLOR) {
                         this.setTile(x, y, TERRITORY_COLOR, this.territoryMap);
                         if (!this.territories.some(t => t[0] === y && t[1] === x)) {
@@ -261,7 +272,7 @@ export class GameState {
         let size = territory[2];
         let neighbors = territory[3];
         let spreadCooldown = territory[4];
-        if (spreadCooldown % 3 == 0) {
+        //if (spreadCooldown % 3 == 0) {
             if (size < 2) {
                 if (size < 1) {
                     this.addtileNeighbors(y, x, neighbors);
@@ -274,9 +285,9 @@ export class GameState {
             size += 1;
             neighbors = Array.from(new Set(neighbors));
             spreadCooldown = 1;
-        } else {
-            spreadCooldown += 1;
-        }
+        //} else {
+            //spreadCooldown += 1;
+        //}
         this.territories[territoryIndex] = [y, x, size, neighbors, spreadCooldown];
     }
 

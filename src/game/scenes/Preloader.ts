@@ -37,6 +37,8 @@ export class Preloader extends Scene
         images_to_load.forEach(([name, path]) => {
             this.load.image(name, path);
         })
+
+        this.load.audio('amusing-kill-sound', "killSound.mp3");
     }
 
     create ()
@@ -45,7 +47,7 @@ export class Preloader extends Scene
         //  For example, you can define global animations here, so we can use them in other scenes.
 
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
-        this.scene.start('MainMenu');
+        this.scene.start('Tutorial');
         images_to_load.forEach(([name, _]) => {
             this.textures.get(name).setFilter(Phaser.Textures.FilterMode.NEAREST);
         });
@@ -53,4 +55,4 @@ export class Preloader extends Scene
 }
 
 
-const images_to_load: [string, string][] = [['hummingbird-active', "Mr.GPT'sBird.png"], ['hummingbird', "Mr.GPT'sBirdSitting.png"], ['placeholder', 'placeholder.png'], ['placeholder-active', 'placeholder-active.png'], ['end-turn', 'end_turn.png'], ['end-turn-clicked', 'end_turn_clicked.png'], ['water-container-water', 'water_container_water.png'], ['water-container-container', 'water_container_container.png'], ['water-container-backing', 'water_container_backing.png']]
+const images_to_load: [string, string][] = [['amusing-hummingbird', "killHummingbird.png"], ['hummingbird-active', "Mr.GPT'sBird.png"], ['hummingbird', "Mr.GPT'sBirdSitting.png"], ['placeholder', 'placeholder.png'], ['placeholder-active', 'placeholder-active.png'], ['end-turn', 'end_turn.png'], ['end-turn-clicked', 'end_turn_clicked.png'], ['water-container-water', 'water_container_water.png'], ['water-container-container', 'water_container_container.png'], ['water-container-backing', 'water_container_backing.png']]

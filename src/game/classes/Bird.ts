@@ -191,16 +191,16 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
             let territory = gameState.territories[i];
             if (territory[0] === birdGridY && territory[1] === birdGridX) {
                 if (this.isEnemy) {
-                    if (territory[4] > 0) {
+                    /*if (territory[4] > 0) {
                         territory[4] -= 1;
                         gameState.territories[i] = territory;
                         break;
                     }
-                    else {
+                    else {*/
                         gameState.territories.splice(i, 1);
                         gameState.setTile(territory[1], territory[0], NONE, gameState.territoryMap);
                         break;
-                    }
+                    //}
                 }
                 else {
                     gameState.expand(territory, i);
@@ -211,7 +211,7 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
         }
         
         if (this.overGridColor == WATER_COLOR) {
-            this.water += 2;
+            this.water += 4;
             this.water = Math.min(24, this.water);
         } else {
             this.water -= 1;
@@ -221,7 +221,7 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
         gameState.waterDisplay.targetWater = this.water;
         this.trail = []
 
-        if (this.water <= 0) {
+        if (this.water <= 0 && !this.isEnemy) {
             this.kill();
         }
         this.updateHealthText();
@@ -261,16 +261,34 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
 
         this.hasAttackedThisTurn = true;
 
-        // simple feedback: small lunge & flash
         const scene = this.scene;
+
+        // compute lunge offset (20 pixels forward)
+        const dx = target.x - this.x;
+        const dy = target.y - this.y;
+        const mag = Math.sqrt(dx * dx + dy * dy) || 1;
+        const ux = dx / mag;   
+        const uy = dy / mag;
+
+        const lungeDistance = 200;  
+        const lungeX = this.x + ux * lungeDistance;
+        const lungeY = this.y + uy * lungeDistance;
+
         scene.tweens.add({
             targets: this,
             duration: 120,
-            x: target.x,
-            y: target.y,
-            yoyo: true
+            x: lungeX,
+            y: lungeY,
+            yoyo: true,
+            onComplete: () => {
+                const tile = grid.worldToTile([this.x, this.y]);
+                const [wx, wy] = grid.tileToWorld(tile);
+                this.x = wx;
+                this.y = wy;
+            }
         });
-        target.takeDamage(this.attackDamage);        
+
+        target.takeDamage(this.attackDamage);     
     }
 
     takeDamage(amount: number) {

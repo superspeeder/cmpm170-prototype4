@@ -13,6 +13,12 @@ export class MainMenu extends Scene {
     lastClicked: boolean
     uiClick?: string | null
     waterDisplay: WaterDisplay;
+    bird: Bird;
+    bird2: Bird;
+    bird3: Bird;
+    enemy: Enemy;
+
+    nameText: Phaser.GameObjects.Text;
 
     nameText: Phaser.GameObjects.Text;
 
@@ -50,20 +56,31 @@ export class MainMenu extends Scene {
             },
         });
 
-        let bird = new Bird(this, [890, 770], "hummingbird", "Jim");
-        bird.setScale(0.2);
-        this.add.existing(bird);
-        gameState.addBird(bird, true);
+        this.bird = new Bird(this, [890, 770], "hummingbird", "Jim");
+        this.bird.setScale(0.2);
+        this.add.existing(this.bird);
 
-        let bird2 = new Bird(this, [680, 770], "hummingbird", "Frank");
-        bird2.setScale(0.2);
-        this.add.existing(bird2);
-        gameState.addBird(bird2, true);
+        this.bird2 = new Bird(this, [670, 770], "hummingbird", "Frank");
+        this.bird2.setScale(0.2);
+        this.add.existing(this.bird2);
 
-        let enemy = new Enemy(this, [1600, 500], "hummingbird", "Tim");
-        enemy.setScale(0.2);
-        this.add.existing(enemy);
-        gameState.addBird(enemy, false);
+        this.bird3 = new Bird(this, [450, 770], "hummingbird", "Bill");
+        this.bird3.setScale(0.2);
+        this.add.existing(this.bird3);
+
+        this.enemy = new Enemy(this, [1600, 500], "hummingbird", "Tim");
+        this.enemy.setScale(0.2);
+        this.add.existing(this.enemy);
+
+        let enemyKillSound = this.sound.add('amusing-kill-sound');
+        enemyKillSound.setVolume(0.5);
+        gameState.enemyKillSound = enemyKillSound;
+
+        let killImage = this.add.sprite(900, 800, 'amusing-hummingbird');
+        killImage.setScrollFactor(0);
+        killImage.setScale(0.8);
+        killImage.setAlpha(0);
+        gameState.amusingKillImage = killImage;
 
         this.endTurnButton = this.add.sprite(1700, 1400, "end-turn");
         this.endTurnButton.setScrollFactor(0)
@@ -106,19 +123,36 @@ export class MainMenu extends Scene {
         this.waterDisplay.scale = 2;
         this.add.existing(this.waterDisplay);
         this.waterDisplay.setScrollFactor(0);
-        gameState.waterDisplay = this.waterDisplay;
 
         this.input.enable(this.endTurnButton)
 
-        gameState.turnQueue.addTurnAnimationTarget(this.waterDisplay);
-        gameState.turnQueue.startGame();
-        gameState.enemyMaker = (scene: Phaser.Scene,
-            [x, y]: [number, number],
-            texture: string | Phaser.Textures.Texture,
-            name: string,) => { return new Enemy(scene, [x, y], texture, name); };
+        // gameState.turnQueue.startGame();
+
+        this.started = false;
     }
 
+    started: boolean;
+
     update(_time: number, delta: number) {
+        if (!this.started) {
+            this.started = true;
+            
+            console.log(this);
+            gameState.scene = this;
+            gameState.addBird(this.bird, true);
+            gameState.addBird(this.bird2, true);
+            gameState.addBird(this.bird3, true);
+            gameState.addBird(this.enemy, false);
+            gameState.waterDisplay = this.waterDisplay;
+            gameState.turnQueue.addTurnAnimationTarget(this.waterDisplay);
+
+            gameState.turnQueue.startGame();
+            gameState.enemyMaker = (scene: Phaser.Scene,
+                [x, y]: [number, number],
+                texture: string | Phaser.Textures.Texture,
+                name: string,) => { return new Enemy(scene, [x, y], texture, name); };
+        
+        }
         gameState.drawGrid(this.graphics);
 
         let mousePointer = this.input.mousePointer;

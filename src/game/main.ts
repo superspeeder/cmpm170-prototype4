@@ -5,6 +5,7 @@ import { MainMenu } from './scenes/MainMenu';
 import { Win } from './scenes/Win';
 import { AUTO, Game } from 'phaser';
 import { Preloader } from './scenes/Preloader';
+import { Tutorial } from './scenes/Tutorial';
 
 //  Find out more information about the Game Config at:
 //  https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
@@ -19,6 +20,7 @@ const config: Phaser.Types.Core.GameConfig = {
     scene: [
         Boot,
         Preloader,
+        Tutorial,
         MainMenu,
         MainGame,
         GameOver,
