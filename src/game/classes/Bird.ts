@@ -261,16 +261,34 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
 
         this.hasAttackedThisTurn = true;
 
-        // simple feedback: small lunge & flash
         const scene = this.scene;
+
+        // compute lunge offset (20 pixels forward)
+        const dx = target.x - this.x;
+        const dy = target.y - this.y;
+        const mag = Math.sqrt(dx * dx + dy * dy) || 1;
+        const ux = dx / mag;   
+        const uy = dy / mag;
+
+        const lungeDistance = 200;  
+        const lungeX = this.x + ux * lungeDistance;
+        const lungeY = this.y + uy * lungeDistance;
+
         scene.tweens.add({
             targets: this,
             duration: 120,
-            x: target.x,
-            y: target.y,
-            yoyo: true
+            x: lungeX,
+            y: lungeY,
+            yoyo: true,
+            onComplete: () => {
+                const tile = grid.worldToTile([this.x, this.y]);
+                const [wx, wy] = grid.tileToWorld(tile);
+                this.x = wx;
+                this.y = wy;
+            }
         });
-        target.takeDamage(this.attackDamage);        
+
+        target.takeDamage(this.attackDamage);     
     }
 
     takeDamage(amount: number) {
