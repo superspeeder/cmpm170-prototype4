@@ -240,7 +240,7 @@ export class GameState {
             this.scene!!.tweens.add({
                 targets: this.amusingKillImage,
                 alpha: 0,
-                duration: 3000,
+                duration: 4000,
                 ease: 'Quad.easeOut',
             });
         }
