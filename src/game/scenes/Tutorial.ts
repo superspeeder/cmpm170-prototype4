@@ -9,7 +9,7 @@ export class Tutorial extends Scene {
     }
 
     create() {
-        this.add.text(350, 300, "Hold LEFT CLICK to move!\n\n\n\nPress SPACE to Play", {
+        this.add.text(350, 300, "Hold LEFT CLICK to move!\n\nClick the Enemy to attack!\n\n\n\nConquer EVERYTHING!\n\n\n\nPress SPACE to Play", {
             fontSize: 96,
             align: "center"
         });
