@@ -197,8 +197,18 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
                         break;
                     }
                     else {*/
-                        gameState.territories.splice(i, 1);
-                        gameState.setTile(territory[1], territory[0], NONE, gameState.territoryMap);
+                        territory[2] = 1;
+                        territory[3] = [[territory[0], territory[1]]];
+                        gameState.addtileNeighbors(territory[0], territory[1], territory[3]);
+                        for (let i in territory[3]) {
+                            let [y, x] = territory[3][i];
+                            gameState.setTile(x, y, NONE, gameState.territoryMap);
+                            gameState.territories.forEach((t, index) => {
+                                if (t[0] === y && t[1] === x) {
+                                    gameState.territories.splice(index, 1);
+                                }
+                            });
+                        }
                         break;
                     //}
                 }
