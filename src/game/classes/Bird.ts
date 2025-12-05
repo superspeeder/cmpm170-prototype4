@@ -335,7 +335,7 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
 
     createHealthText(scene: Phaser.Scene) {
         this.healthText = scene.add.text(this.x, this.y - 30, `${this.health}/${this.maxHealth}`, {
-        fontSize: '16px',
+        fontSize: '30px',
         color: '#ffffff',
         stroke: '#000000',
         strokeThickness: 3
