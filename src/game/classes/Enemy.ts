@@ -46,10 +46,11 @@ export class Enemy extends Bird {
         let target = playerBirds[0]; 
         let bestDist = Number.POSITIVE_INFINITY; 
 
+        const myTile = grid.worldToTile([this.x, this.y]);
+
         for (const b of playerBirds) {
-            const dx = b.x - this.x;
-            const dy = b.y - this.y; 
-            const d = Math.sqrt(dx*dx + dy*dy);
+            const targetTile = grid.worldToTile([b.x, b.y]);
+            const d = grid.hexDistance(myTile, targetTile);
 
             if (d < bestDist){
                 bestDist = d;
@@ -57,21 +58,31 @@ export class Enemy extends Bird {
             }
         }
 
-        if (!target || bestDist < 2) {
+        if (!target) {
             this.overGridColor = gridColor;
             this.remainingMovement = 0;
             this.activeBird = false;
             gameState.turnQueue.nextTurn(this.scene);
             return; 
         }
+
+        if (this.canAttack(target, grid)){
+            this.attack(target, grid);
+            this.remainingMovement = 0;
+            this.activeBird = false; 
+            this.overGridColor = gridColor; 
+            gameState.turnQueue.nextTurn(this.scene);
+            this.updateHealthText();
+            return; 
+        }
         
         const vecX = target.x - this.x;
         const vecY = target.y - this.y; 
         const magn = Math.sqrt(vecX * vecX + vecY * vecY);
-        const nx = vecX / magn;
-        const ny = vecY / magn;
 
-        if (this.remainingMovement > 0){
+        if (magn > 0 && this.remainingMovement > 0){
+            const nx = vecX / magn;
+            const ny = vecY / magn; 
             const move_mag = Math.min(this.remainingMovement, 2.0 * delta/5.0);
             this.x += move_mag * nx;
             this.y += move_mag * ny; 
@@ -81,22 +92,19 @@ export class Enemy extends Bird {
         }
 
         this.overGridColor = gridColor; 
-        if (this.remainingMovement <= 0){
+        if (this.canAttack(target, grid) && !this.hasAttackedThisTurn){
+            this.attack(target, grid); 
+            this.remainingMovement = 0; 
             this.activeBird = false;
+            this.overGridColor = gridColor;
             gameState.turnQueue.nextTurn(this.scene);
         }
+        else if (this.remainingMovement <= 0){
+            this.activeBird = false;
+            gameState.turnQueue.nextTurn(this.scene);
+        }   
 
-        const hit_radius = 20; 
-        if (bestDist < hit_radius && !this.hasAttackedThisTurn){
-            target.water -= 1;
-            this.hasAttackedThisTurn = true;
-            if (target.water < 0){
-                target.kill();
-            }
-            this.remainingMovement = 0;
-            this.activeBird = false;
-            gameState.turnQueue.nextTurn(this.scene);
-        }
+        
         this.updateHealthText();
     }
 }
