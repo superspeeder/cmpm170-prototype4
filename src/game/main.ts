@@ -13,7 +13,7 @@ const config: Phaser.Types.Core.GameConfig = {
     type: AUTO,
     width: 1024 * 2,
     height: 768 * 2,
-    zoom: 0.75,
+    zoom: 0.5,
     parent: 'game-container',
     backgroundColor: '#028af8',
     antialias: false,
