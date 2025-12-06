@@ -29,7 +29,7 @@ const config: Phaser.Types.Core.GameConfig = {
         Win
     ],
     scale: {
-        mode: Phaser.Scale.CENTER_HORIZONTALLY,
+        mode: Phaser.Scale.HEIGHT_CONTROLS_WIDTH,
         autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
     },
 };
