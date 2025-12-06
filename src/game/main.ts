@@ -13,10 +13,12 @@ const config: Phaser.Types.Core.GameConfig = {
     type: AUTO,
     width: 1024 * 2,
     height: 768 * 2,
+    zoom: 0.75,
     parent: 'game-container',
     backgroundColor: '#028af8',
-    antialias: true,
-    antialiasGL: true,
+    antialias: false,
+    antialiasGL: false,
+    pixelArt: false,
     scene: [
         Boot,
         Preloader,
@@ -27,7 +29,7 @@ const config: Phaser.Types.Core.GameConfig = {
         Win
     ],
     scale: {
-        mode: Phaser.Scale.HEIGHT_CONTROLS_WIDTH,
+        mode: Phaser.Scale.CENTER_HORIZONTALLY,
         autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
     },
 };
