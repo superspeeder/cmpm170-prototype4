@@ -79,9 +79,17 @@ export class MainMenu extends Scene {
         killImage.setAlpha(0);
         gameState.amusingKillImage = killImage;
 
-        let backgroundMusic = this.sound.add('background-music', { loop: true, volume: 0.01});
-        gameState.backgroundMusic = backgroundMusic;
-        gameState.backgroundMusic.play()
+        if (!gameState.backgroundMusic) {
+            const backgroundMusic = this.sound.add('background-music', {
+                loop: true,
+                volume: 0.1,     
+            });
+            gameState.backgroundMusic = backgroundMusic;
+        }
+
+        if (!gameState.backgroundMusic.isPlaying) {
+            gameState.backgroundMusic.play();
+        }
         
 
         this.endTurnButton = this.add.sprite(1700, 1400, "end-turn");
