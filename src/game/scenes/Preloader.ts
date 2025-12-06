@@ -39,7 +39,7 @@ export class Preloader extends Scene
         })
 
         this.load.audio('amusing-kill-sound', "killSound.mp3");
-        this.load.audio('background-music', "backgroundMusic.mp3");
+        this.load.audio('background-music', "backgroundMusic.wav");
     }
 
     create ()
