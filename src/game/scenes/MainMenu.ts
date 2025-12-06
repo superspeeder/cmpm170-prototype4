@@ -17,7 +17,6 @@ export class MainMenu extends Scene {
     bird2: Bird;
     bird3: Bird;
     enemy: Enemy;
-
     nameText: Phaser.GameObjects.Text;
 
     nameText: Phaser.GameObjects.Text;
@@ -81,6 +80,19 @@ export class MainMenu extends Scene {
         killImage.setScale(0.8);
         killImage.setAlpha(0);
         gameState.amusingKillImage = killImage;
+
+        if (!gameState.backgroundMusic) {
+            const backgroundMusic = this.sound.add('background-music', {
+                loop: true,
+                volume: 0.1,     
+            });
+            gameState.backgroundMusic = backgroundMusic;
+        }
+
+        if (!gameState.backgroundMusic.isPlaying) {
+            gameState.backgroundMusic.play();
+        }
+        
 
         this.endTurnButton = this.add.sprite(1700, 1400, "end-turn");
         this.endTurnButton.setScrollFactor(0)

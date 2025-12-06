@@ -31,6 +31,7 @@ export class GameState {
     cameraCenterY: number;
     waterDisplay: WaterDisplay;
     occupancy: Map<TileKey, Bird> = new Map();
+    backgroundMusic?: Phaser.Sound.BaseSound;
     enemyMaker: (scene: Phaser.Scene,
         [x, y]: [number, number],
         texture: string | Phaser.Textures.Texture,
@@ -352,8 +353,10 @@ export class GameState {
         });
         if (ok) {
             if (isPlayerTurn) {
+                //this.backgroundMusic?.stop();
                 this.scene!!.scene.start("Win");
             } else {
+                //this.backgroundMusic?.stop();
                 this.scene!!.scene.start("GameOver");
             }
         }

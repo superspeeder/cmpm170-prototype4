@@ -18,7 +18,7 @@ export class Tutorial extends Scene {
     update() {
 
         this.input.keyboard?.on('keydown-SPACE', () => {
-
+            this.sound.unlock();
             this.scene.start('MainMenu');
 
         });
