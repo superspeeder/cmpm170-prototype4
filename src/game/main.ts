@@ -13,11 +13,10 @@ const config: Phaser.Types.Core.GameConfig = {
     type: AUTO,
     width: 1024 * 2,
     height: 768 * 2,
-    zoom: 1,
     parent: 'game-container',
     backgroundColor: '#028af8',
-    antialias: false,
-    antialiasGL: false,
+    antialias: true,
+    antialiasGL: true,
     pixelArt: false,
     scene: [
         Boot,
