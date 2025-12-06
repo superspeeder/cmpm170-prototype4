@@ -56,7 +56,7 @@ export class MainMenu extends Scene {
             },
         });
 
-        this.hitSound = this.sound.add('player-attack');
+        this.hitSound = this.sound.add('player-attack', {"volume" : 0.3});
          
         this.bird = new Bird(this, [890, 770], "hummingbird", "Jim", this.hitSound);
         this.bird.setScale(0.2);
@@ -70,14 +70,14 @@ export class MainMenu extends Scene {
         this.bird3.setScale(0.2);
         this.add.existing(this.bird3);
 
-        this.hurtSound = this.sound.add('player-hurt');
+        this.hurtSound = this.sound.add('player-hurt', {"volume" : 0.5});
 
         this.enemy = new Enemy(this, [1600, 500], "hummingbird", "Tim", this.hurtSound);
         this.enemy.setScale(0.2);
         this.add.existing(this.enemy);
 
         let enemyKillSound = this.sound.add('amusing-kill-sound');
-        enemyKillSound.setVolume(0.3);
+        enemyKillSound.setVolume(0.1);
         gameState.enemyKillSound = enemyKillSound;
 
         let killImage = this.add.sprite(900, 800, 'amusing-hummingbird');
