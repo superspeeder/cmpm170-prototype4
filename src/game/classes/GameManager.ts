@@ -32,10 +32,11 @@ export class GameState {
     waterDisplay: WaterDisplay;
     occupancy: Map<TileKey, Bird> = new Map();
     backgroundMusic?: Phaser.Sound.BaseSound;
+    enemyAttack: Phaser.Sound.BaseSound;
     enemyMaker: (scene: Phaser.Scene,
         [x, y]: [number, number],
         texture: string | Phaser.Textures.Texture,
-        name: string,) => Bird;
+        name: string, attackSound: Phaser.Sound.BaseSound) => Bird;
 
 
     constructor() {
@@ -196,7 +197,7 @@ export class GameState {
         })
 
         if (this.isEnemyRespawning && this.turnQueue.rounds > this.birdRespawnTimer) {
-            let enemy = this.enemyMaker(this.scene!!, [Math.floor(Math.random() * 2000), Math.floor(Math.random() * 1200)], "hummingbird", "Tim");
+            let enemy = this.enemyMaker(this.scene!!, [Math.floor(Math.random() * 2000), Math.floor(Math.random() * 1200)], "hummingbird", "Tim", this.enemyAttack);
             enemy.setScale(0.2);
             this.scene!!.add.existing(enemy);
             this.addBird(enemy, false);
@@ -353,10 +354,10 @@ export class GameState {
         });
         if (ok) {
             if (isPlayerTurn) {
-                //this.backgroundMusic?.stop();
+                this.backgroundMusic?.stop();
                 this.scene!!.scene.start("Win");
             } else {
-                //this.backgroundMusic?.stop();
+                this.backgroundMusic?.stop();
                 this.scene!!.scene.start("GameOver");
             }
         }

@@ -16,6 +16,7 @@ export interface TurnTarget {
 
     id: number;
     water: number;
+    name: any;
 }
 
 export class Turn {

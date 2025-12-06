@@ -41,7 +41,7 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
     previousTurnWater: number;
     graphics: Phaser.GameObjects.Graphics;
     name: string;
-
+    attackSound: Phaser.Sound.BaseSound;
     maxHealth: number;
     health: number;
     attackDamage: number;
@@ -54,6 +54,7 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
         [x, y]: [number, number],
         texture: string | Phaser.Textures.Texture,
         name: string,
+        attackSound: Phaser.Sound.BaseSound
     ) {
         super(scene, x, y, texture);
         this.keys = this.scene.input.keyboard!!.createCursorKeys();
@@ -70,6 +71,7 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
         this.createHealthText(scene);
         this.graphics = scene.add.graphics();
         this.name = name;
+        this.attackSound = attackSound;
     }
 
     snapToHexGrid(grid: HexGrid) {
@@ -298,7 +300,8 @@ export class Bird extends Phaser.GameObjects.Sprite implements TurnTarget {
             }
         });
 
-        target.takeDamage(this.attackDamage);     
+        target.takeDamage(this.attackDamage);   
+        this.attackSound.play();
     }
 
     takeDamage(amount: number) {

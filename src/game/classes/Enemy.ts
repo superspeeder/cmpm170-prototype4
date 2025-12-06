@@ -10,8 +10,9 @@ export class Enemy extends Bird {
         [x, y]: [number, number],
         texture: string | Phaser.Textures.Texture,
         name: string,
+        attackSound: Phaser.Sound.BaseSound
     ){
-        super(scene, [x,y], texture, name);
+        super(scene, [x,y], texture, name, attackSound);
 
         this.isEnemy = true;
         this.setTint(0xff5555);

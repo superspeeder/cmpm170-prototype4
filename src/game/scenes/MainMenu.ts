@@ -16,8 +16,11 @@ export class MainMenu extends Scene {
     bird: Bird;
     bird2: Bird;
     bird3: Bird;
+    hitSound: Phaser.Sound.BaseSound;
+    hurtSound: Phaser.Sound.BaseSound;
     enemy: Enemy;
     nameText: Phaser.GameObjects.Text;
+    static hurtSound: Phaser.Sound.BaseSound;
 
     nameText: Phaser.GameObjects.Text;
 
@@ -55,24 +58,28 @@ export class MainMenu extends Scene {
             },
         });
 
-        this.bird = new Bird(this, [890, 770], "hummingbird", "Jim");
+        this.hitSound = this.sound.add('player-attack');
+         
+        this.bird = new Bird(this, [890, 770], "hummingbird", "Jim", this.hitSound);
         this.bird.setScale(0.2);
         this.add.existing(this.bird);
 
-        this.bird2 = new Bird(this, [670, 770], "hummingbird", "Frank");
+        this.bird2 = new Bird(this, [670, 770], "hummingbird", "Frank", this.hitSound);
         this.bird2.setScale(0.2);
         this.add.existing(this.bird2);
 
-        this.bird3 = new Bird(this, [450, 770], "hummingbird", "Bill");
+        this.bird3 = new Bird(this, [450, 770], "hummingbird", "Bill", this.hitSound);
         this.bird3.setScale(0.2);
         this.add.existing(this.bird3);
 
-        this.enemy = new Enemy(this, [1600, 500], "hummingbird", "Tim");
+        this.hurtSound = this.sound.add('player-hurt');
+
+        this.enemy = new Enemy(this, [1600, 500], "hummingbird", "Tim", this.hurtSound);
         this.enemy.setScale(0.2);
         this.add.existing(this.enemy);
 
         let enemyKillSound = this.sound.add('amusing-kill-sound');
-        enemyKillSound.setVolume(0.5);
+        enemyKillSound.setVolume(0.3);
         gameState.enemyKillSound = enemyKillSound;
 
         let killImage = this.add.sprite(900, 800, 'amusing-hummingbird');
@@ -162,7 +169,7 @@ export class MainMenu extends Scene {
             gameState.enemyMaker = (scene: Phaser.Scene,
                 [x, y]: [number, number],
                 texture: string | Phaser.Textures.Texture,
-                name: string,) => { return new Enemy(scene, [x, y], texture, name); };
+                name: string,) => { return new Enemy(scene, [x, y], texture, name, this.sound.add('player-hurt')); };
         
         }
         gameState.drawGrid(this.graphics);
