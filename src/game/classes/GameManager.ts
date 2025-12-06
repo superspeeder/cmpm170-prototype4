@@ -237,7 +237,7 @@ export class GameState {
             this.birdRespawnTimer = this.turnQueue.rounds + 2;
             this.isEnemyRespawning = true;
 
-            this.enemyKillSound?.play();
+            this.enemyKillSound?.play({"volume" : 0.2});
             this.amusingKillImage?.setAlpha(1);
             this.scene!!.tweens.add({
                 targets: this.amusingKillImage,
