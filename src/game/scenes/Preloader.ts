@@ -38,6 +38,8 @@ export class Preloader extends Scene
             this.load.image(name, path);
         })
 
+        this.load.audio('player-attack', "player_attack.wav");
+        this.load.audio('player-hurt', "player_ouch.wav");
         this.load.audio('amusing-kill-sound', "killSound.mp3");
         this.load.audio('background-music', "backgroundMusic.wav");
     }
