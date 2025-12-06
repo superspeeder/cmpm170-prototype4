@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/favicon.png" />
@@ -12,6 +13,49 @@
     <div id="app">
         <div id="game-container"></div>
     </div>
+
+    <style>
+        #desc {
+            font-family: Arial, Helvetica, sans-serif;
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            flex: 1 1 0;
+        }
+
+        #desc p {
+            font-size: larger;
+        }
+    </style>
+    <div id="desc">
+        <div id="desc-container">
+
+            <h1>How To Play:</h1>
+            <p>
+                Click and hold to move your bird towards your cursor! Beware, you have limited movement per turn.
+            </p>
+
+            <p>
+                End your turn in water (blue tiles) to collect it, don't run out of water or you will die!
+            </p>
+
+            <p>
+                Click on enemy birds to attack when within range!
+            </p>
+
+            <p>
+                End your turn on territory (gray tiles) to conquer more land (expand your territory)! Warning: enemy
+                birds will steal your territory.
+            </p>
+
+            <p>
+                Win the game by taking over the entire map!
+            </p>
+        </div>
+
+    </div>
     <script type="module" src="./bundle.min.js"></script>
 </body>
+
 </html>
